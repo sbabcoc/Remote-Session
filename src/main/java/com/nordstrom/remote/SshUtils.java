@@ -33,6 +33,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintWriter;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
 
@@ -41,8 +42,8 @@ import java.util.Properties;
  * The implementation was copied verbatim from a post on 
  * <a href='http://stackoverflow.com/questions/2405885/run-a-command-over-ssh-with-jsch'>Stack Overflow</a>. 
  * JavaDoc has been added for completeness and comprehensibility.
- * <p>
- * Usage:
+ * 
+ * <p>Usage:</p>
  * <pre><code>    String remoteCommandOutput = exec("ssh://user:pass@host/work/dir/path", "ls -t | head -n1");
  *    String remoteShellOutput = shell("ssh://user:pass@host/work/dir/path", "ls");
  *    shell("ssh://user:pass@host/work/dir/path", "ls", System.out);
@@ -86,15 +87,15 @@ public final class SshUtils {
      * 
      * <pre><code>    sftp("file:/C:/home/file.txt", "ssh://user:pass@host/home");
      *    sftp("ssh://user:pass@host/home/file.txt", "file:/C:/home");</code></pre>
-     * <p>
-     * <b>NOTE</b>: As indicated by the examples, source and target URIs must refer to opposing locations 
-     * - {@code file} for local file system and {@code ssh} for remote file system.
-     * <p>
-     * For upload: <b>fromUri</b> = {@code file}; <b>toUri</b> = {@code ssh}<br>
-     * For download: <b>fromUri</b> = {@code ssh}; <b>toUri</b> = {@code file}
-     * <p>
-     * <b>NOTE</b>: The transferred file retains its original name. If specified, the name component of {@code toUrl} 
-     * will be ignored.
+     * 
+     * <p><b>NOTE</b>: As indicated by the examples, source and target URIs must refer to opposing locations 
+     * - {@code file} for local file system and {@code ssh} for remote file system.</p>
+     * 
+     * <p>For upload: <b>fromUri</b> = {@code file}; <b>toUri</b> = {@code ssh}<br>
+     * For download: <b>fromUri</b> = {@code ssh}; <b>toUri</b> = {@code file}</p>
+     * 
+     * <p><b>NOTE</b>: The transferred file retains its original name. If specified, the name component of {@code toUrl} 
+     * will be ignored.</p>
      * 
      * @param fromUri source file {@link URI} as a string
      * @param toUri target folder {@link URI} as a string
@@ -158,7 +159,7 @@ public final class SshUtils {
 
     /**
      * Open an SSH shell session with the specified input and output streams.
-     * <p>
+     * 
      * <pre><code>    shell("ssh://user:pass@host", System.in, System.out);</code></pre>
      * 
      * @param connectUri SSH connection URI
@@ -173,7 +174,7 @@ public final class SshUtils {
 
     /**
      * Open an SSH shell session and execute the specified command.
-     * <p>
+     * 
      * <pre><code>    String remoteOutput = shell("ssh://user:pass@host/work/dir/path", "ls");</code></pre>
      * 
      * @param connectUri SSH connection URI
@@ -193,7 +194,7 @@ public final class SshUtils {
 
     /**
      * Open an SSH shell session and execute the specified script, using the provided stream for output.
-     * <p>
+     * 
      * <pre><code>    shell("ssh://user:pass@host/work/dir/path", "ls", System.out);</code></pre>
      * 
      * @param connectUri SSH connection URI
@@ -245,8 +246,8 @@ public final class SshUtils {
 
     /**
      * Open an SSH remote execution channel and execute the specified command.
-     * <p>
-     * <pre><code>    System.out.println(exec("ssh://user:pass@host/work/dir/path", "ls -t | head -n1"));</code><pre>
+     * 
+     * <pre><code>    System.out.println(exec("ssh://user:pass@host/work/dir/path", "ls -t | head -n1"));</code></pre>
      * 
      * @param connectUri SSH connection URI
      * @param command command to be executed
@@ -279,8 +280,8 @@ public final class SshUtils {
 
             LOG.info("Starting exec for " + session.getMaskedUri());
             session.execute();
-            String output = IOUtils.toString(is);
-            session.assertExitStatus(IOUtils.toString(errIs));
+            String output = IOUtils.toString(is, Charset.defaultCharset());
+            session.assertExitStatus(IOUtils.toString(errIs, Charset.defaultCharset()));
 
             return trim(output);
         } catch (InterruptedException | JSchException | IOException e) {
