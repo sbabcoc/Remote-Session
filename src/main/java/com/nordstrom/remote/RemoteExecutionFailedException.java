@@ -6,13 +6,13 @@ public class RemoteExecutionFailedException extends IllegalStateException {
 	
 	private int exitStatus;
 	private String maskedUri;
-	private String commandOutput;
+	private String taskOutput;
 
 	public RemoteExecutionFailedException(String message, int status, String uri, String output) {
 		super(message);
 		exitStatus = status;
 		maskedUri = uri;
-		commandOutput = output;
+		taskOutput = output;
 	}
 
 	public int getExitStatus() {
@@ -23,8 +23,8 @@ public class RemoteExecutionFailedException extends IllegalStateException {
 		return maskedUri;
 	}
 	
-	public String getCommandOutput() {
-		return commandOutput;
+	public String getTaskOutput() {
+		return taskOutput;
 	}
 
 }
