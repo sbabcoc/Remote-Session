@@ -1,6 +1,5 @@
 package com.nordstrom.remote;
 
-import static com.google.common.base.Preconditions.checkState;
 import static java.lang.Thread.sleep;
 import static org.apache.commons.io.FilenameUtils.getFullPath;
 import static org.apache.commons.io.FilenameUtils.getName;
@@ -386,11 +385,16 @@ public final class SshUtils {
         /**
          * Verify that the remote task completed normally
          * 
-         * @param failMessage context-specific failure message
-         * @throws IllegalStateException if exit status is non-zero
+         * @param taskOutput output from the remote task
+         * @throws RemoteExecutionFailedException if exit status is non-zero
          */
-        public void assertExitStatus(String failMessage) {
-            checkState(channel.getExitStatus() == 0, "Exit status %s for %s => %s", channel.getExitStatus(), getMaskedUri(), failMessage);
+        public void assertExitStatus(String taskOutput) {
+    		int exitStatus = channel.getExitStatus();
+        	if (exitStatus != 0) {
+        		String maskedUri = getMaskedUri();
+        		String message = String.format("Exit status %s for %s => check task output for details", exitStatus, maskedUri);
+        		throw new RemoteExecutionFailedException(message, exitStatus, maskedUri, taskOutput);
+        	}
         }
 
         /**
