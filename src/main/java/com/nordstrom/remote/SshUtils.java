@@ -60,25 +60,25 @@ public final class SshUtils {
     private static final String FILE = "file";
     
     public enum ChannelType {
-    	SESSION("session"),
-    	SHELL("shell"),
-    	EXEC("exec"),
-    	X11("x11"),
-    	AGENT_FORWARDING("auth-agent@openssh.com"),
-    	DIRECT_TCPIP("direct-tcpip"),
-    	FORWARDED_TCPIP("forwarded-tcpip"),
-    	SFTP("sftp"),
-    	SUBSYSTEM("subsystem");
-    	
-    	private String name;
-    	
-    	ChannelType(String name) {
-    		this.name = name;
-    	}
+        SESSION("session"),
+        SHELL("shell"),
+        EXEC("exec"),
+        X11("x11"),
+        AGENT_FORWARDING("auth-agent@openssh.com"),
+        DIRECT_TCPIP("direct-tcpip"),
+        FORWARDED_TCPIP("forwarded-tcpip"),
+        SFTP("sftp"),
+        SUBSYSTEM("subsystem");
+        
+        private String name;
+        
+        ChannelType(String name) {
+            this.name = name;
+        }
     }
 
     private SshUtils() {
-		throw new AssertionError("SshUtils is a static utility class that cannot be instantiated");
+        throw new AssertionError("SshUtils is a static utility class that cannot be instantiated");
     }
 
     /**
@@ -87,14 +87,13 @@ public final class SshUtils {
      * <pre><code>    sftp("file:/C:/home/file.txt", "ssh://user:pass@host/home");
      *    sftp("ssh://user:pass@host/home/file.txt", "file:/C:/home");</code></pre>
      * 
-     * <p><b>NOTE</b>: As indicated by the examples, source and target URIs must refer to opposing locations 
-     * - {@code file} for local file system and {@code ssh} for remote file system.</p>
+     * <p><b>NOTE</b>: The transferred file retains its original name. If specified, the name component of {@code toUrl} 
+     * will be ignored.<br>
+     * <b>NOTE</b>: As indicated by the examples, source and target URIs must refer to opposing locations:
+     * {@code file} for local file system and {@code ssh} for remote file system.</p>
      * 
      * <p>For upload: <b>fromUri</b> = {@code file}; <b>toUri</b> = {@code ssh}<br>
      * For download: <b>fromUri</b> = {@code ssh}; <b>toUri</b> = {@code file}</p>
-     * 
-     * <p><b>NOTE</b>: The transferred file retains its original name. If specified, the name component of {@code toUrl} 
-     * will be ignored.</p>
      * 
      * @param fromUri source file {@link URI} as a string
      * @param toUri target folder {@link URI} as a string
@@ -236,8 +235,8 @@ public final class SshUtils {
             session.execute();
             session.assertExitStatus("Check shell output for error details.");
         } catch (InterruptedException e) {
-			// set the 'interrupted' flag
-			Thread.currentThread().interrupt();
+            // set the 'interrupted' flag
+            Thread.currentThread().interrupt();
         } catch (JSchException e) {
             throw new RuntimeException("Cannot execute script", e);
         }
@@ -254,9 +253,9 @@ public final class SshUtils {
      */
     public static String exec(String connectUri, String command) {
         try (SessionHolder<ChannelExec> session = new SessionHolder<>(ChannelType.EXEC, URI.create(connectUri))) {
-        	String workDir = session.getWorkDir();
-        	if (workDir != null) command = "cd " + workDir + " && " + command;
-        	return exec(session, command);
+            String workDir = session.getWorkDir();
+            if (workDir != null) command = "cd " + workDir + " && " + command;
+            return exec(session, command);
         }
     }
 
@@ -297,7 +296,7 @@ public final class SshUtils {
     public static class SessionHolder<C extends Channel> implements Closeable {
 
         private static final Logger LOG = LoggerFactory.getLogger(SessionHolder.class);
-    	
+        
         private static final int DEFAULT_CONNECT_TIMEOUT = 5000;
         private static final int DEFAULT_PORT = 22;
         private static final int TERMINAL_HEIGHT = 1000;
@@ -306,8 +305,8 @@ public final class SshUtils {
         private static final int TERMINAL_HEIGHT_IN_PIXELS = 1000;
         private static final int DEFAULT_WAIT_TIMEOUT = 100;
 
-    	private static final int MAX_ITER_DISCONNECT = 600;
-    	private static final int WAIT_DISCONNECT = 100;
+        private static final int MAX_ITER_DISCONNECT = 600;
+        private static final int WAIT_DISCONNECT = 100;
 
         private ChannelType channelType;
         private URI uri;
@@ -373,8 +372,8 @@ public final class SshUtils {
             try {
                 Channel newChannel = session.openChannel(channelType.name);
                 if (channelType == ChannelType.SHELL) {
-					((ChannelShell) newChannel).setPtyType("ANSI", TERMINAL_WIDTH, TERMINAL_HEIGHT,
-							TERMINAL_WIDTH_IN_PIXELS, TERMINAL_HEIGHT_IN_PIXELS);
+                    ((ChannelShell) newChannel).setPtyType("ANSI", TERMINAL_WIDTH, TERMINAL_HEIGHT,
+                            TERMINAL_WIDTH_IN_PIXELS, TERMINAL_HEIGHT_IN_PIXELS);
                 }
                 return (C) newChannel;
             } catch (JSchException e) {
@@ -389,12 +388,12 @@ public final class SshUtils {
          * @throws RemoteExecutionFailedException if exit status is non-zero
          */
         public void assertExitStatus(String taskOutput) {
-    		int exitStatus = channel.getExitStatus();
-        	if (exitStatus != 0) {
-        		String maskedUri = getMaskedUri();
-        		String message = String.format("Exit status %s for %s => check task output for details", exitStatus, maskedUri);
-        		throw new RemoteExecutionFailedException(message, exitStatus, maskedUri, taskOutput);
-        	}
+            int exitStatus = channel.getExitStatus();
+            if (exitStatus != 0) {
+                String maskedUri = getMaskedUri();
+                String message = String.format("Exit status %s for %s => check task output for details", exitStatus, maskedUri);
+                throw new RemoteExecutionFailedException(message, exitStatus, maskedUri, taskOutput);
+            }
         }
 
         /**
@@ -435,7 +434,7 @@ public final class SshUtils {
          * @return stream object for performing channel I/O
          */
         public ChannelStreams<C> getChannelStream() {
-       		return new ChannelStreams<C>(channel);
+               return new ChannelStreams<C>(channel);
         }
 
         /**
@@ -501,42 +500,42 @@ public final class SshUtils {
          * 
          * @return channel exit status
          */
-    	public int getExitStatus() {
-    		return channel.getExitStatus();
-    	}
+        public int getExitStatus() {
+            return channel.getExitStatus();
+        }
 
-    	/**
-    	 * Disconnect channel and session.
-    	 * 
-    	 * @param waitClose 'true' to delay disconnect until the channel is closed; 'false' to disconnect immediately
-    	 */
-    	public void disconnect(boolean waitClose) {
-   			if (waitClose) waitChannel();
-   			close();
-    	}
+        /**
+         * Disconnect channel and session.
+         * 
+         * @param waitClose 'true' to delay disconnect until the channel is closed; 'false' to disconnect immediately
+         */
+        public void disconnect(boolean waitClose) {
+               if (waitClose) waitChannel();
+               close();
+        }
 
-    	/**
-    	 * Wait for channel to close.<br>
-    	 * <b>NOTE</b>: This method polls the channel 'closed' state a maximum of {@link #MAX_ITER_DISCONNECT} times,
-    	 * delaying {@link #WAIT_DISCONNECT} milliseconds between each check.
-    	 */
-    	public void waitChannel() {
-    		// Wait until channel is finished (otherwise redirections will not work)
-    		int i = MAX_ITER_DISCONNECT;
-    		
-    		while (true) {
-    			// if channel is closed or tried max times
-    			if (channel.isClosed() || (--i <= 0)) break;
-    			
-    			try {
-    				Thread.sleep(WAIT_DISCONNECT);
-    			} catch (InterruptedException e) {
-    				// set the 'interrupted' flag
-    				Thread.currentThread().interrupt();
-    				break;
-    			}
-    		}
-    	}
+        /**
+         * Wait for channel to close.<br>
+         * <b>NOTE</b>: This method polls the channel 'closed' state a maximum of {@link #MAX_ITER_DISCONNECT} times,
+         * delaying {@link #WAIT_DISCONNECT} milliseconds between each check.
+         */
+        public void waitChannel() {
+            // Wait until channel is finished (otherwise redirections will not work)
+            int i = MAX_ITER_DISCONNECT;
+            
+            while (true) {
+                // if channel is closed or tried max times
+                if (channel.isClosed() || (--i <= 0)) break;
+                
+                try {
+                    Thread.sleep(WAIT_DISCONNECT);
+                } catch (InterruptedException e) {
+                    // set the 'interrupted' flag
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
     }
     
     /**
@@ -545,135 +544,135 @@ public final class SshUtils {
      * @param <C> channel type wrapped by this session holder
      */
     public static class ChannelStreams<C extends Channel> {
-    	
+        
         private static final int INPUT_WAIT = 100;
-    	private static final int BUFFER_SIZE = 100 * 1024;
-    	
-    	private C channel;
-    	private InputStream in;
-    	private OutputStream out;
-    	
-    	private byte[] tmp = new byte[BUFFER_SIZE];
-    	
+        private static final int BUFFER_SIZE = 100 * 1024;
+        
+        private C channel;
+        private InputStream in;
+        private OutputStream out;
+        
+        private byte[] tmp = new byte[BUFFER_SIZE];
+        
         private static final Logger LOG = LoggerFactory.getLogger(ChannelStreams.class);
-    	
+        
         /**
          * Constructor for channel I/O object
          * 
          * @param channel the channel to which I/O operation will be directed
          */
-    	public ChannelStreams(C channel) {
-    		this.channel = channel;
-    		try {
-				in = channel.getInputStream();
-			} catch (IOException e) {
-				throw new IllegalStateException("Failed to acquire channel input stream", e);
-			}
-    		try {
-				out = channel.getOutputStream();
-			} catch (IOException e) {
-				throw new IllegalStateException("Failed to acquire channel output stream", e);
-			}
-    	}
-    	
-    	/**
-    	 * Read the input from the channel.
-    	 * 
-    	 * @param waitClose 'true' to poll for input until the channel closes; 'false' to return available input
-    	 * @return channel input (may be empty)
-    	 * @throws IOException if an I/O error occurs
-    	 */
-    	public String readChannel(boolean waitClose) throws IOException {
-    		StringBuilder stdout = new StringBuilder();
-    		try {
-    			while (true) {
-    				String recv = readAvailable();
-    				if (recv != null) stdout.append(recv);
+        public ChannelStreams(C channel) {
+            this.channel = channel;
+            try {
+                in = channel.getInputStream();
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to acquire channel input stream", e);
+            }
+            try {
+                out = channel.getOutputStream();
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to acquire channel output stream", e);
+            }
+        }
+        
+        /**
+         * Read the input from the channel.
+         * 
+         * @param waitClose 'true' to poll for input until the channel closes; 'false' to return available input
+         * @return channel input (may be empty)
+         * @throws IOException if an I/O error occurs
+         */
+        public String readChannel(boolean waitClose) throws IOException {
+            StringBuilder stdout = new StringBuilder();
+            try {
+                while (true) {
+                    String recv = readAvailable();
+                    if (recv != null) stdout.append(recv);
 
-        			if (!waitClose || channel.isClosed()) break;
-        			
-    				Thread.sleep(INPUT_WAIT);
-    			}
-    		} catch (InterruptedException e) {
-    			// set the 'interrupted' flag
-    			Thread.currentThread().interrupt();
-			}
+                    if (!waitClose || channel.isClosed()) break;
+                    
+                    Thread.sleep(INPUT_WAIT);
+                }
+            } catch (InterruptedException e) {
+                // set the 'interrupted' flag
+                Thread.currentThread().interrupt();
+            }
 
-    		return stdout.toString();
-    	}
+            return stdout.toString();
+        }
 
-    	/**
-    	 * Read available input from the specified stream.
-    	 * 
-    	 * @return available input (may be 'null')
-    	 * @throws IOException if an I/O error occurs
-    	 */
-    	private String readAvailable() throws IOException {
-    		if (in.available() > 0) {
-    			int i = in.read(tmp, 0, BUFFER_SIZE);
-    			if (i < 0) return null;
+        /**
+         * Read available input from the specified stream.
+         * 
+         * @return available input (may be 'null')
+         * @throws IOException if an I/O error occurs
+         */
+        private String readAvailable() throws IOException {
+            if (in.available() > 0) {
+                int i = in.read(tmp, 0, BUFFER_SIZE);
+                if (i < 0) return null;
 
-    			String recv = new String(tmp, 0, i);
-    			return recv;
-    		}
+                String recv = new String(tmp, 0, i);
+                return recv;
+            }
 
-    		return null;
-    	}
-    	
-    	/**
-    	 * Wait for input to be available.
-    	 * 
-    	 * @throws IOException if an I/O error occurs
-    	 */
-    	public void waitForInput() throws IOException {
-			try {
-				while (in.available() == 0) {
-					Thread.sleep(INPUT_WAIT);
-				}
-			} catch (InterruptedException e) {
-				// set the 'interrupt' flag
-				Thread.currentThread().interrupt();
-			}
-    	}
-    	
-    	/**
-    	 * Wait for the specified prompt to be received from the remote host.
-    	 * 
-    	 * @param prompt prompt to wait for
-    	 * @param maxWait maximum interval in milliseconds to wait for the specified prompt; -1 to wait indefinitely
-    	 * @return all of the input that was received while waiting for the prompt
-    	 * @throws InterruptedException if this thread was interrupted
-    	 * @throws IOException if an I/O error occurs
-    	 */
-    	public String waitForPrompt(String prompt, long maxWait) throws InterruptedException, IOException {
-    		StringBuilder input = new StringBuilder();
-    		long maxTime = System.currentTimeMillis() + maxWait;
-    		
-    		while (true) {
-    			String recv = readChannel(false);
-    			if (recv != null) {
-    				input.append(recv);
-    				if (input.toString().contains(prompt)) break;
-    			}
-    			
-    			if ((maxWait != -1) && (System.currentTimeMillis() > maxTime)) break;
-    			Thread.sleep(INPUT_WAIT);
-    		}
-    		
-    		return input.toString();
-    	}
-    	
-    	/**
-    	 * Write the specified string to the remote host, followed by a carriage return
-    	 * 
-    	 * @param line the line of text to be written
-    	 * @throws IOException if an I/O error occurs
-    	 */
-    	public void writeln(String line) throws IOException {
-    		out.write((line + "\n").getBytes());
-    		out.flush();
-    	}
-    	
+            return null;
+        }
+        
+        /**
+         * Wait for input to be available.
+         * 
+         * @throws IOException if an I/O error occurs
+         */
+        public void waitForInput() throws IOException {
+            try {
+                while (in.available() == 0) {
+                    Thread.sleep(INPUT_WAIT);
+                }
+            } catch (InterruptedException e) {
+                // set the 'interrupt' flag
+                Thread.currentThread().interrupt();
+            }
+        }
+        
+        /**
+         * Wait for the specified prompt to be received from the remote host.
+         * 
+         * @param prompt prompt to wait for
+         * @param maxWait maximum interval in milliseconds to wait for the specified prompt; -1 to wait indefinitely
+         * @return all of the input that was received while waiting for the prompt
+         * @throws InterruptedException if this thread was interrupted
+         * @throws IOException if an I/O error occurs
+         */
+        public String waitForPrompt(String prompt, long maxWait) throws InterruptedException, IOException {
+            StringBuilder input = new StringBuilder();
+            long maxTime = System.currentTimeMillis() + maxWait;
+            
+            while (true) {
+                String recv = readChannel(false);
+                if (recv != null) {
+                    input.append(recv);
+                    if (input.toString().contains(prompt)) break;
+                }
+                
+                if ((maxWait != -1) && (System.currentTimeMillis() > maxTime)) break;
+                Thread.sleep(INPUT_WAIT);
+            }
+            
+            return input.toString();
+        }
+        
+        /**
+         * Write the specified string to the remote host, followed by a carriage return
+         * 
+         * @param line the line of text to be written
+         * @throws IOException if an I/O error occurs
+         */
+        public void writeln(String line) throws IOException {
+            out.write((line + "\n").getBytes());
+            out.flush();
+        }
+        
     }
 
     /**
@@ -720,7 +719,7 @@ public final class SshUtils {
          */
         @Override
         public boolean promptYesNo(String message) {
-        	LOG.debug("promptYesNo: {}", message);
+            LOG.debug("promptYesNo: {}", message);
             return false;
         }
 
@@ -743,7 +742,7 @@ public final class SshUtils {
          */
         @Override
         public boolean promptPassphrase(String message) {
-        	LOG.debug("promptPassphrase: {}", message);
+            LOG.debug("promptPassphrase: {}", message);
             return true;
         }
 
@@ -755,7 +754,7 @@ public final class SshUtils {
          */
         @Override
         public boolean promptPassword(String message) {
-        	LOG.debug("promptPassword: {}", message);
+            LOG.debug("promptPassword: {}", message);
             return true;
         }
 
@@ -766,46 +765,46 @@ public final class SshUtils {
          */
         @Override
         public void showMessage(String message) {
-        	LOG.debug("showMessage: {}", message);
+            LOG.debug("showMessage: {}", message);
         }
 
         /**
-		 * Retrieves answers from the user to a number of questions.
-		 * 
-		 * @param destination
-		 *            identifies the user/host pair where we want to login.
-		 *            (This was not sent by the remote side).
-		 * @param name
-		 *            the name of the request (could be shown in the window
-		 *            title). This may be empty.
-		 * @param instruction
-		 *            an instruction string to be shown to the user. This may be
-		 *            empty, and may contain new-lines.
-		 * @param prompt
-		 *            a list of prompt strings.
-		 * @param echo
-		 *            for each prompt string, whether to show the texts typed in
-		 *            (true) or to mask them (false). This array will have the
-		 *            same length as prompt.
-		 * @return the answers as given by the user. This must be an array of
-		 *         same length as prompt, if the user confirmed. If the user
-		 *         cancels the input, the return value should be 'null'.
-		 */
+         * Retrieves answers from the user to a number of questions.
+         * 
+         * @param destination
+         *            identifies the user/host pair where we want to login.
+         *            (This was not sent by the remote side).
+         * @param name
+         *            the name of the request (could be shown in the window
+         *            title). This may be empty.
+         * @param instruction
+         *            an instruction string to be shown to the user. This may be
+         *            empty, and may contain new-lines.
+         * @param prompt
+         *            a list of prompt strings.
+         * @param echo
+         *            for each prompt string, whether to show the texts typed in
+         *            (true) or to mask them (false). This array will have the
+         *            same length as prompt.
+         * @return the answers as given by the user. This must be an array of
+         *         same length as prompt, if the user confirmed. If the user
+         *         cancels the input, the return value should be 'null'.
+         */
         @Override
         public String[] promptKeyboardInteractive(String destination, String name, String instruction, String[] prompt, boolean[] echo) {
-        	StringBuilder builder = new StringBuilder("promptKeyboardInteractive: ");
-        	builder.append("\n    destination: ").append(destination);
-        	builder.append("\n    name: ").append(name);
-        	builder.append("\n    instruction: ");
-        	for (String line : instruction.split("\n")) {
-        		builder.append("\n        ").append(line);
-        	}
-        	for (int i = 0; i < prompt.length; i++) {
-        		builder.append("\n    prompt #").append(i + 1)
-        				.append(" [").append((echo[i]) ? "echo" : "mask").append("]: ")
-        				.append(prompt[i]);
-        	}
-        	LOG.debug(builder.toString());
+            StringBuilder builder = new StringBuilder("promptKeyboardInteractive: ");
+            builder.append("\n    destination: ").append(destination);
+            builder.append("\n    name: ").append(name);
+            builder.append("\n    instruction: ");
+            for (String line : instruction.split("\n")) {
+                builder.append("\n        ").append(line);
+            }
+            for (int i = 0; i < prompt.length; i++) {
+                builder.append("\n    prompt #").append(i + 1)
+                        .append(" [").append((echo[i]) ? "echo" : "mask").append("]: ")
+                        .append(prompt[i]);
+            }
+            LOG.debug(builder.toString());
             return null;
         }
     }
