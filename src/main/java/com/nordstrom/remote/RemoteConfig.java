@@ -41,9 +41,9 @@ public class RemoteConfig extends SettingsCore<RemoteConfig.RemoteSettings> {
         DISCONNECT_CHECK_ATTEMPTS("remote.disconnect.check.attempts", "600"),
         /** name: <b>remote.disconnect.check.interval</b> <br> default: <b>100</b> */
         DISCONNECT_CHECK_INTERVAL("remote.disconnect.check.interval", "100"),
-        
+        /** name: <b>remote.channel.check.interval</b> <br> default: <b>100</b> */
         CHANNEL_CHECK_INTERVAL("remote.channel.check.interval", "100"),
-        
+        /** name: <b>remote.channel.buffer.size</b> <br> default: <b>102400</b> */
         CHANNEL_BUFFER_SIZE("remote.channel.buffer.size", Integer.toString(BUFFER_SIZE));
         
         private String propertyName;
