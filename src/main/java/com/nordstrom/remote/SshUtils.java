@@ -392,7 +392,10 @@ public final class SshUtils {
                         jsch.addIdentity(keyPath.toString());
                     }
                     
-                    jsch.setKnownHosts(keyPath.resolveSibling("known_hosts").toString());
+                    Path knownHosts = keyPath.resolveSibling("known_hosts");
+                    if (knownHosts.toFile().exists()) {
+                        jsch.setKnownHosts(knownHosts.toString());
+                    }
                 }
 
                 Session newSession = jsch.getSession(getUser(), getHost(), getPort());
