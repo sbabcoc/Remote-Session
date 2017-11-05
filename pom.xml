@@ -10,7 +10,7 @@
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <automation-framework-core.version>0.5.0.0</automation-framework-core.version>
+    <jsch.version>0.1.54</jsch.version>
     <apache-commons.version>2.5</apache-commons.version>
     <guava.version>21.0</guava.version>
     <nordstrom-common.version>1.0.0.0</nordstrom-common.version>
@@ -20,14 +20,15 @@
     <source-plugin.version>3.0.1</source-plugin.version>
     <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
     <deploy-plugin.version>2.8.2</deploy-plugin.version>
+    <settings.version>0.2.0.2</settings.version>
   </properties>
   
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.nordstrom.test-automation.tools</groupId>
-        <artifactId>automation-framework-core</artifactId>
-        <version>${automation-framework-core.version}</version>
+        <groupId>com.jcraft</groupId>
+        <artifactId>jsch</artifactId>
+        <version>${jsch.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-io</groupId>
@@ -45,6 +46,11 @@
         <version>${nordstrom-common.version}</version>
       </dependency>
       <dependency>
+        <groupId>com.nordstrom.test-automation.tools</groupId>
+        <artifactId>settings</artifactId>
+        <version>${settings.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
         <version>${testng.version}</version>
@@ -54,8 +60,8 @@
   
   <dependencies>
     <dependency>
-      <groupId>com.nordstrom.test-automation.tools</groupId>
-      <artifactId>automation-framework-core</artifactId>
+      <groupId>com.jcraft</groupId>
+      <artifactId>jsch</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
@@ -68,6 +74,10 @@
     <dependency>
       <groupId>com.nordstrom.test-automation.tools</groupId>
       <artifactId>common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.nordstrom.test-automation.tools</groupId>
+      <artifactId>settings</artifactId>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>

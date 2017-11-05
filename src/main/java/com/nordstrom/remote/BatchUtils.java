@@ -39,7 +39,9 @@ public class BatchUtils {
         
         try {
             connectUri = "ssh://" + userName + ":" + URLEncoder.encode(password, "UTF-8") + "@" + hostname + batchDir;
-        } catch (UnsupportedEncodingException e1) { }
+        } catch (UnsupportedEncodingException e) {
+            // This exception will never be thrown
+        }
         
         if (sudoCmd != null) {
             int idx = sudoCmd.lastIndexOf(' ') + 1;
