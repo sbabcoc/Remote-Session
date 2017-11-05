@@ -129,7 +129,7 @@ public final class SshUtils {
             channel.put(fis, getName(from.getPath()));
 
         } catch (Exception e) {
-            throw new RuntimeException("Cannot upload file", e);
+            throw new RemoteFileUploadFailedError("Cannot upload file", e);
         }
     }
 
@@ -152,7 +152,7 @@ public final class SshUtils {
             channel.get(getName(from.getPath()), bos);
 
         } catch (Exception e) {
-            throw new RuntimeException("Cannot download file", e);
+            throw new RemoteFileDownloadFailedError("Cannot download file", e);
         }
     }
 
@@ -209,13 +209,14 @@ public final class SshUtils {
             if (session.getWorkDir() != null) {
                 pw.println("cd " + session.getWorkDir());
             }
+            
             pw.println(script);
             pw.println("exit");
             pw.flush();
 
             shell(session, in, out);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RemoteInputStreamInstantiationError(e);
         }
     }
 
@@ -239,7 +240,7 @@ public final class SshUtils {
             // set the 'interrupted' flag
             Thread.currentThread().interrupt();
         } catch (JSchException e) {
-            throw new RuntimeException("Cannot execute script", e);
+            throw new RemoteExecutionFailedError("Cannot execute script", e);
         }
     }
 
@@ -254,9 +255,14 @@ public final class SshUtils {
      */
     public static String exec(String connectUri, String command) {
         try (SessionHolder<ChannelExec> session = new SessionHolder<>(ChannelType.EXEC, URI.create(connectUri))) {
+            String changeDir = "";
             String workDir = session.getWorkDir();
-            if (workDir != null) command = "cd " + workDir + " && " + command;
-            return exec(session, command);
+            
+            if (workDir != null) {
+                changeDir = "cd " + workDir + " && ";
+            }
+            
+            return exec(session, changeDir + command);
         }
     }
 
@@ -268,6 +274,7 @@ public final class SshUtils {
      * @return output from executed command
      */
     public static String exec(SessionHolder<ChannelExec> session, String command) {
+        String output = null;
         try (PipedOutputStream errPipe = new PipedOutputStream();
                 PipedInputStream errIs = new PipedInputStream(errPipe);
                 InputStream is = session.getChannel().getInputStream()) {
@@ -279,13 +286,17 @@ public final class SshUtils {
 
             LOG.info("Starting exec for " + session.getMaskedUri());
             session.execute();
-            String output = IOUtils.toString(is, Charset.defaultCharset());
+            output = IOUtils.toString(is, Charset.defaultCharset());
             session.assertExitStatus(IOUtils.toString(errIs, Charset.defaultCharset()));
-
-            return trim(output);
-        } catch (InterruptedException | JSchException | IOException e) {
-            throw new RuntimeException("Cannot execute command", e);
+        } catch (IOException e) {
+            throw new RemoteInputStreamInstantiationError(e);
+        } catch (JSchException e) {
+            throw new RemoteExecutionFailedError("Cannot execute command", e);
+        } catch (InterruptedException e) {
+            // set the 'interrupted' flag
+            Thread.currentThread().interrupt();
         }
+        return trim(output);
     }
 
     /**
@@ -369,7 +380,7 @@ public final class SshUtils {
                     Path keyPath = remoteConfig.getKeyPath();
                     
                     if (keyPath == null) {
-                        throw new RuntimeException("Neither password nor private key were supplied");
+                        throw new RemoteCredentialsUnspecifiedError();
                     }
                     
                     Path pubPath = keyPath.resolveSibling(keyPath.getFileName() + ".pub");
@@ -396,7 +407,7 @@ public final class SshUtils {
                 
                 return newSession;
             } catch (JSchException e) {
-                throw new RuntimeException("Cannot create session for " + getMaskedUri(), e);
+                throw new RemoteSessionInstantiationFailedError("Cannot create session for " + getMaskedUri(), e);
             }
         }
         
@@ -416,7 +427,7 @@ public final class SshUtils {
                 }
                 return (C) newChannel;
             } catch (JSchException e) {
-                throw new RuntimeException("Cannot create " + channelType + " channel for " + getMaskedUri(), e);
+                throw new RemoteChannelInstantiationFailedError("Cannot create " + channelType + " channel for " + getMaskedUri(), e);
             }
         }
 
@@ -722,7 +733,7 @@ public final class SshUtils {
          * 
          * @param prompt prompt to check for
          * @param input {@link StringBuilder} object
-         * @return 'false' is prompt is found; otherwise 'true'
+         * @return 'false' is prompt is found or channel is closed; otherwise 'true'
          * @throws InterruptedException if this thread was interrupted
          * @throws IOException if an I/O error occurs
          */
@@ -734,7 +745,7 @@ public final class SshUtils {
                     return false;
                 }
             }
-            return true;
+            return !channel.isClosed();
         }
         
         /**
