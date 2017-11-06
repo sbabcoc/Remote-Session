@@ -410,7 +410,7 @@ public final class SshUtils {
                 
                 return newSession;
             } catch (JSchException e) {
-                throw new RemoteSessionInstantiationFailedError("Cannot create session for " + getMaskedUri(), e);
+                throw new RemoteSessionInstantiationError("Cannot create session for " + getMaskedUri(), e);
             }
         }
         
