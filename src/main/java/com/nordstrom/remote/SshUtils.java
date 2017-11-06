@@ -236,11 +236,11 @@ public final class SshUtils {
             LOG.info("Starting shell for " + session.getMaskedUri());
             session.execute();
             session.assertExitStatus("Check shell output for error details.");
+        } catch (JSchException e) {
+            throw new RemoteExecutionFailedError(session, e);
         } catch (InterruptedException e) {
             // set the 'interrupted' flag
             Thread.currentThread().interrupt();
-        } catch (JSchException e) {
-            throw new RemoteExecutionFailedError("Cannot execute script", e);
         }
     }
 
@@ -291,7 +291,7 @@ public final class SshUtils {
         } catch (IOException e) {
             throw new RemoteInputStreamInstantiationError(e);
         } catch (JSchException e) {
-            throw new RemoteExecutionFailedError("Cannot execute command", e);
+            throw new RemoteExecutionFailedError(session, output, e);
         } catch (InterruptedException e) {
             // set the 'interrupted' flag
             Thread.currentThread().interrupt();
@@ -438,14 +438,11 @@ public final class SshUtils {
          * Verify that the remote task completed normally
          * 
          * @param taskOutput output from the remote task
-         * @throws RemoteExecutionFailedException if exit status is non-zero
+         * @throws RemoteExecutionFailedError if exit status is non-zero
          */
         public void assertExitStatus(String taskOutput) {
-            int exitStatus = channel.getExitStatus();
-            if (exitStatus != 0) {
-                String maskedUri = getMaskedUri();
-                String message = String.format("Exit status %s for %s => check task output for details", exitStatus, maskedUri);
-                throw new RemoteExecutionFailedException(message, exitStatus, maskedUri, taskOutput);
+            if (getExitStatus() != 0) {
+                throw new RemoteExecutionFailedError(this, taskOutput);
             }
         }
 
@@ -589,7 +586,9 @@ public final class SshUtils {
          * @param waitClose 'true' to delay disconnect until the channel is closed; 'false' to disconnect immediately
          */
         public void disconnect(boolean waitClose) {
-               if (waitClose) waitChannel();
+               if (waitClose) {
+                   waitChannel();
+               }
                close();
         }
 
@@ -721,10 +720,24 @@ public final class SshUtils {
          * @throws IOException if an I/O error occurs
          */
         public String waitForPrompt(String prompt, long maxWait) throws InterruptedException, IOException {
+            return waitForPrompt(prompt, maxWait, null);
+        }
+        
+        /**
+         * Wait for the specified prompt to be received from the remote host.
+         * 
+         * @param prompt prompt to wait for
+         * @param maxWait maximum interval in milliseconds to wait for the specified prompt; -1 to wait indefinitely
+         * @param logger SLF4J {@link Logger} object for output (may be 'null')
+         * @return all of the input that was received while waiting for the prompt
+         * @throws InterruptedException if this thread was interrupted
+         * @throws IOException if an I/O error occurs
+         */
+        public String waitForPrompt(String prompt, long maxWait, Logger logger) throws InterruptedException, IOException {
             StringBuilder input = new StringBuilder();
             long maxTime = System.currentTimeMillis() + maxWait;
             
-            while (appendAndCheckFor(prompt, input) && ((maxWait == -1) || (System.currentTimeMillis() <= maxTime))) {
+            while (appendAndCheckFor(prompt, input, logger) && ((maxWait == -1) || (System.currentTimeMillis() <= maxTime))) {
                 Thread.sleep(CHECK_INTERVAL);
             }
             
@@ -736,14 +749,18 @@ public final class SshUtils {
          * 
          * @param prompt prompt to check for
          * @param input {@link StringBuilder} object
+         * @param logger SLF4J {@link Logger} object for output (may be 'null')
          * @return 'false' is prompt is found or channel is closed; otherwise 'true'
          * @throws InterruptedException if this thread was interrupted
          * @throws IOException if an I/O error occurs
          */
-        private boolean appendAndCheckFor(String prompt, StringBuilder input) throws InterruptedException, IOException {
+        private boolean appendAndCheckFor(String prompt, StringBuilder input, Logger logger) throws InterruptedException, IOException {
             String recv = readChannel(false);
-            if (recv != null) {
+            if ( ! ((recv == null) || recv.isEmpty())) {
                 input.append(recv);
+                if (logger != null) {
+                    logger.debug(recv);
+                }
                 if (input.toString().contains(prompt)) {
                     return false;
                 }
