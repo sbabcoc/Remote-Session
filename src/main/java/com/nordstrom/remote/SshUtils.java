@@ -430,7 +430,7 @@ public final class SshUtils {
                 }
                 return (C) newChannel;
             } catch (JSchException e) {
-                throw new RemoteChannelInstantiationFailedError("Cannot create " + channelType + " channel for " + getMaskedUri(), e);
+                throw new RemoteChannelInstantiationError("Cannot create " + channelType + " channel for " + getMaskedUri(), e);
             }
         }
 
