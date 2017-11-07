@@ -129,7 +129,7 @@ public final class SshUtils {
             channel.put(fis, getName(from.getPath()));
 
         } catch (Exception e) {
-            throw new RemoteFileUploadFailedError("Cannot upload file", e);
+            throw new RemoteFileUploadFailedException("Cannot upload file", e);
         }
     }
 
@@ -152,7 +152,7 @@ public final class SshUtils {
             channel.get(getName(from.getPath()), bos);
 
         } catch (Exception e) {
-            throw new RemoteFileDownloadFailedError("Cannot download file", e);
+            throw new RemoteFileDownloadFailedException("Cannot download file", e);
         }
     }
 
@@ -216,7 +216,7 @@ public final class SshUtils {
 
             shell(session, in, out);
         } catch (IOException e) {
-            throw new RemoteInputStreamInstantiationError(e);
+            throw new RemoteInputStreamInstantiationException(e);
         }
     }
 
@@ -237,7 +237,7 @@ public final class SshUtils {
             session.execute();
             session.assertExitStatus("Check shell output for error details.");
         } catch (JSchException e) {
-            throw new RemoteExecutionFailedError(session, e);
+            throw new RemoteExecutionFailedException(session, e);
         } catch (InterruptedException e) {
             // set the 'interrupted' flag
             Thread.currentThread().interrupt();
@@ -289,9 +289,9 @@ public final class SshUtils {
             output = IOUtils.toString(is, Charset.defaultCharset());
             session.assertExitStatus(IOUtils.toString(errIs, Charset.defaultCharset()));
         } catch (IOException e) {
-            throw new RemoteInputStreamInstantiationError(e);
+            throw new RemoteInputStreamInstantiationException(e);
         } catch (JSchException e) {
-            throw new RemoteExecutionFailedError(session, output, e);
+            throw new RemoteExecutionFailedException(session, output, e);
         } catch (InterruptedException e) {
             // set the 'interrupted' flag
             Thread.currentThread().interrupt();
@@ -380,7 +380,7 @@ public final class SshUtils {
                     Path keyPath = remoteConfig.getKeyPath();
                     
                     if (keyPath == null) {
-                        throw new RemoteCredentialsUnspecifiedError();
+                        throw new RemoteCredentialsUnspecifiedException();
                     }
                     
                     Path pubPath = keyPath.resolveSibling(keyPath.getFileName() + ".pub");
@@ -410,7 +410,7 @@ public final class SshUtils {
                 
                 return newSession;
             } catch (JSchException e) {
-                throw new RemoteSessionInstantiationError("Cannot create session for " + getMaskedUri(), e);
+                throw new RemoteSessionInstantiationException("Cannot create session for " + getMaskedUri(), e);
             }
         }
         
@@ -430,7 +430,7 @@ public final class SshUtils {
                 }
                 return (C) newChannel;
             } catch (JSchException e) {
-                throw new RemoteChannelInstantiationError("Cannot create " + channelType + " channel for " + getMaskedUri(), e);
+                throw new RemoteChannelInstantiationException("Cannot create " + channelType + " channel for " + getMaskedUri(), e);
             }
         }
 
@@ -438,11 +438,11 @@ public final class SshUtils {
          * Verify that the remote task completed normally
          * 
          * @param taskOutput output from the remote task
-         * @throws RemoteExecutionFailedError if exit status is non-zero
+         * @throws RemoteExecutionFailedException if exit status is non-zero
          */
         public void assertExitStatus(String taskOutput) {
             if (getExitStatus() != 0) {
-                throw new RemoteExecutionFailedError(this, taskOutput);
+                throw new RemoteExecutionFailedException(this, taskOutput);
             }
         }
 

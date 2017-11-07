@@ -2,7 +2,7 @@ package com.nordstrom.remote;
 
 import com.nordstrom.remote.SshUtils.SessionHolder;
 
-public class RemoteExecutionFailedError extends Error {
+public class RemoteExecutionFailedException extends RuntimeException {
 
 	private static final long serialVersionUID = 4253410628869516498L;
 	
@@ -10,15 +10,15 @@ public class RemoteExecutionFailedError extends Error {
 	private final String maskedUri;
 	private final String taskOutput;
 	
-	public RemoteExecutionFailedError(SessionHolder<?> session, Throwable cause) {
+	public RemoteExecutionFailedException(SessionHolder<?> session, Throwable cause) {
 	    this(session, null, cause);
 	}
 	
-	public RemoteExecutionFailedError(SessionHolder<?> session, String output) {
+	public RemoteExecutionFailedException(SessionHolder<?> session, String output) {
 	    this(session, output, null);
 	}
 
-	public RemoteExecutionFailedError(SessionHolder<?> session, String output, Throwable cause) {
+	public RemoteExecutionFailedException(SessionHolder<?> session, String output, Throwable cause) {
 		super(getMessage(session, output), cause);
 		exitStatus = session.getExitStatus();
 		maskedUri = session.getMaskedUri();
