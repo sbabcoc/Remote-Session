@@ -1,17 +1,27 @@
 package com.nordstrom.remote;
 
-public class RemoteExecutionFailedException extends IllegalStateException {
+import com.nordstrom.remote.SshUtils.SessionHolder;
+
+public class RemoteExecutionFailedException extends RuntimeException {
 
 	private static final long serialVersionUID = 4253410628869516498L;
 	
-	private int exitStatus;
-	private String maskedUri;
-	private String taskOutput;
+	private final int exitStatus;
+	private final String maskedUri;
+	private final String taskOutput;
+	
+	public RemoteExecutionFailedException(SessionHolder<?> session, Throwable cause) {
+	    this(session, null, cause);
+	}
+	
+	public RemoteExecutionFailedException(SessionHolder<?> session, String output) {
+	    this(session, output, null);
+	}
 
-	public RemoteExecutionFailedException(String message, int status, String uri, String output) {
-		super(message);
-		exitStatus = status;
-		maskedUri = uri;
+	public RemoteExecutionFailedException(SessionHolder<?> session, String output, Throwable cause) {
+		super(getMessage(session, output), cause);
+		exitStatus = session.getExitStatus();
+		maskedUri = session.getMaskedUri();
 		taskOutput = output;
 	}
 
@@ -25,6 +35,14 @@ public class RemoteExecutionFailedException extends IllegalStateException {
 	
 	public String getTaskOutput() {
 		return taskOutput;
+	}
+	
+	private static String getMessage(SessionHolder<?> session, String output) {
+	    String message = String.format("Exit status %s for %s", session.getExitStatus(), session.getMaskedUri());
+	    if ((output == null) || output.isEmpty()) {
+	        return message;
+	    }
+	    return message + " => check task output for details";
 	}
 
 }
