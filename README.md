@@ -1,4 +1,4 @@
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.nordstrom.tools/remote-session/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.nordstrom.tools/remote-session)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.nordstrom.tools/remote-session/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.nordstrom.tools/remote-session)
 
 # REMOTE SESSION UTILITIES
 
