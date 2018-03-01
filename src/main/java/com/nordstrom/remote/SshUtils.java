@@ -383,18 +383,19 @@ public final class SshUtils {
                         throw new RemoteCredentialsUnspecifiedException();
                     }
                     
-                    Path pubPath = keyPath.resolveSibling(keyPath.getFileName() + ".pub");
-                    
                     String keyPass = remoteConfig.getString(RemoteSettings.SSH_KEY_PASS.key());
                     if (keyPass != null) {
+                        Path pubPath = keyPath.resolveSibling(keyPath.getFileName() + ".pub");
                         jsch.addIdentity(keyPath.toString(), pubPath.toString(), keyPass.getBytes());
                     } else {
                         jsch.addIdentity(keyPath.toString());
                     }
                     
-                    Path knownHosts = keyPath.resolveSibling("known_hosts");
-                    if (knownHosts.toFile().exists()) {
-                        jsch.setKnownHosts(knownHosts.toString());
+                    if ( ! remoteConfig.getBoolean(RemoteSettings.IGNORE_KNOWN_HOSTS.key())) {
+                        Path knownHosts = keyPath.resolveSibling("known_hosts");
+                        if (knownHosts.toFile().exists()) {
+                            jsch.setKnownHosts(knownHosts.toString());
+                        }
                     }
                 }
 
