@@ -23,6 +23,8 @@ public class RemoteConfig extends SettingsCore<RemoteConfig.RemoteSettings> {
         SSH_KEY_NAME("remote.ssh.key.name", "id_rsa"),
         /** name: <b>remote.ssh.key.pass</b> <br> default: {@code null} */
         SSH_KEY_PASS("remote.ssh.key.pass", null),
+        /** name: <b>remote.ignore.known.hosts</b> <br> default: <b>false</b> */
+        IGNORE_KNOWN_HOSTS("remote.ignore.known.hosts", "false"),
         /** name: <b>remote.session.connect.timeout</b> <br> default: <b>5000</b> */
         SESSION_CONNECT_TIMEOUT("remote.session.connect.timeout", "5000"),
         /** name: <b>remote.ssh.port.number</b> <br> default: <b>22</b> */
