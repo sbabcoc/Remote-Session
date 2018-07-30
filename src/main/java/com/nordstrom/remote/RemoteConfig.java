@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration.ConfigurationException;
+
 import com.nordstrom.automation.settings.SettingsCore;
 
 public class RemoteConfig extends SettingsCore<RemoteConfig.RemoteSettings> {
