@@ -2,7 +2,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.nordstrom.tools</groupId>
   <artifactId>remote-session</artifactId>
-  <version>0.9.5</version>
   <packaging>jar</packaging>
   
   <name>Remote Session</name>
@@ -27,7 +26,7 @@
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <settings.version>2.0.7</settings.version>
+    <settings.version>2.1.1</settings.version>
     <jsch.version>0.1.54</jsch.version>
     <apache-commons.version>2.5</apache-commons.version>
     <guava.version>23.5-jre</guava.version>
@@ -246,4 +245,5 @@
       </properties>
     </profile>
   </profiles>
+  <version>1.0.0-SNAPSHOT</version>
 </project>
