@@ -26,6 +26,8 @@
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <settings.version>2.2.0</settings.version>
     <jsch.version>0.1.54</jsch.version>
     <apache-commons.version>2.5</apache-commons.version>
@@ -33,7 +35,6 @@
     <java-utils.version>1.3.3</java-utils.version>
     <testng.version>6.11</testng.version>
     <surefire-plugin.version>2.19.1</surefire-plugin.version>
-    <compiler-plugin.version>3.6.0</compiler-plugin.version>
     <source-plugin.version>3.0.1</source-plugin.version>
     <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
     <gpg-plugin.version>1.6</gpg-plugin.version>
@@ -126,15 +127,6 @@
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${compiler-plugin.version}</version>
-          <configuration>
-            <source>1.8</source>
-            <target>1.8</target>
-          </configuration>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
