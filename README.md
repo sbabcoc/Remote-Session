@@ -78,9 +78,9 @@ This is essentially a hybrid of the previous two secure-shell methods, well-suit
     }
 ```
 
-## JSch Reference Implementation (BatchUtils)
+## JSch Reference Implementation (SshUtils)
 
-**BatchUtils** is a reference implementation of a **JSch** client. It enables you to execute the specified command, optionally executing an initial command to switch to an alternate user first.
+**SshUtils** is a reference implementation of a **JSch** client. It enables you to execute the specified command, optionally executing an initial command to switch to an alternate user first.
 
 ```java
     String userName = "user";
@@ -89,12 +89,12 @@ This is essentially a hybrid of the previous two secure-shell methods, well-suit
     String sudoCmd = "sudo su - admin";
     String batchDir = "/work/dir/path";
     String batchCmd = "./script.ksh parm1 parm2";
-    String output = BatchUtils.executeBatch(userName, password, hostName, sudoCmd, batchDir, batchCmd);
+    String output = SshUtils.executeBatch(userName, password, hostName, sudoCmd, batchDir, batchCmd);
     System.out.println(output);
 ```
 
-The implementation of `BatchUtils` demonstrates how to use a couple of important **Remote Session** classes:
-* `SessionHolder` - This is a wrapper class for objects that extend the `Channel` class. The wrapper implements the `Closeable` interface, and `BatchUtils` uses a "try-with-resources" block to ensure that the channel is always closed regardless of the outcome of command execution. `SessionHolder` includes these methods (among others):
+The implementation of `SshUtils` demonstrates how to use a couple of important **Remote Session** classes:
+* `SessionHolder` - This is a wrapper class for objects that extend the `Channel` class. The wrapper implements the `Closeable` interface, and `SshUtils` uses a "try-with-resources" block to ensure that the channel is always closed regardless of the outcome of command execution. `SessionHolder` includes these methods (among others):
   * `getChannel` - Get the channel to the remote session created for this `SessionHolder`.
   * `getChannelStream` - Get a new channel stream object for this session.
   * `disconnect` - Disconnect channel and session.
