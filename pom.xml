@@ -32,7 +32,7 @@
     <jsch.version>0.1.54</jsch.version>
     <apache-commons.version>2.5</apache-commons.version>
     <guava.version>23.5-jre</guava.version>
-    <java-utils.version>1.7.2</java-utils.version>
+    <java-utils.version>1.7.3</java-utils.version>
     <testng.version>6.11</testng.version>
     <surefire-plugin.version>2.19.1</surefire-plugin.version>
     <source-plugin.version>3.0.1</source-plugin.version>
