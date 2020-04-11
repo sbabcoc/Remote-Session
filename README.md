@@ -27,7 +27,7 @@
 
 ## Remote Interactive Shell
 
-**Remote Session** supports interacting with remote systems via a secure `shell` channel, in which input and output are streamed between local and remote systems. Each of the three method provided for secure shell interaction exhibit different operational characteristics.
+**Remote Session** supports interacting with remote systems via a secure `shell` channel, in which input and output are streamed between local and remote systems. Each of the three methods provided for secure shell interaction exhibit different operational characteristics.
 
 ###### Unbounded Stream I/O
 ```java
