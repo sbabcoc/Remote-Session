@@ -485,7 +485,7 @@ public final class SshUtils {
          * @return stream object for performing channel I/O
          */
         public ChannelStreams<C> getChannelStream() {
-               return new ChannelStreams<>(channel);
+            return new ChannelStreams<>(channel);
         }
 
         /**
@@ -587,10 +587,10 @@ public final class SshUtils {
          * @param waitClose 'true' to delay disconnect until the channel is closed; 'false' to disconnect immediately
          */
         public void disconnect(boolean waitClose) {
-               if (waitClose) {
-                   waitChannel();
-               }
-               close();
+           if (waitClose) {
+               waitChannel();
+           }
+           close();
         }
 
         /**
