@@ -6,7 +6,7 @@
   
   <name>Remote Session</name>
   <description>Remote Session is a small collection of utility classes for interacting with remote systems via Secure Shell (SSH) protocol.</description>
-  <url>https://github.com/Nordstrom/Remote-Session</url>
+  <url>https://github.com/sbabcoc/Remote-Session</url>
   
   <licenses>
     <license>
@@ -44,9 +44,9 @@
   </properties>
   
   <scm>
-    <connection>scm:git:https://github.com/Nordstrom/Remote-Session.git</connection>
-    <developerConnection>scm:git:https://github.com/Nordstrom/Remote-Session.git</developerConnection>
-    <url>https://github.com/Nordstrom/Remote-Session/tree/master</url>
+    <connection>scm:git:https://github.com/sbabcoc/Remote-Session.git</connection>
+    <developerConnection>scm:git:https://github.com/sbabcoc/Remote-Session.git</developerConnection>
+    <url>https://github.com/sbabcoc/Remote-Session/tree/master</url>
     <tag>HEAD</tag>
   </scm>
 
