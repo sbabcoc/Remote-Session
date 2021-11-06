@@ -31,13 +31,24 @@
 
 ###### Unbounded Stream I/O
 ```java
-    InputStream is = System.in;
-    OutputStream os = System.out;
-    SshUtils.shell("ssh://user:pass@host", is, os);
-    PrintStream ps = new PrintStream(is, true);
-    ps.println("ls -la");
-    ps.println("exit");
-    System.out.println(IOUtils.toString(os, Charset.defaultCharset()));
+import com.nordstrom.remote.SshUtils;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.nio.charset.Charset;
+import org.apache.commons.io.IOUtils;
+
+...
+
+    public void example() {
+        InputStream is = System.in;
+        OutputStream os = System.out;
+        SshUtils.shell("ssh://user:pass@host", is, os);
+        PrintStream ps = new PrintStream(is, true);
+        ps.println("ls -la");
+        ps.println("exit");
+        System.out.println(IOUtils.toString(os, Charset.defaultCharset()));
+    }
 ```
 
 With unbounded stream I/O, the channel remains open until the input stream is closed or an `exit` command is submitted.
@@ -51,9 +62,18 @@ From the client perspective, this is effectively equivalent to `exec(String, Str
 
 ###### Submit Command with Streamed Output
 ```java
-    OutputStream os = System.out;
-    SshUtils.shell("ssh://user:pass@host", "ls -la", os);
-    System.out.println(IOUtils.toString(os, Charset.defaultCharset()));
+import com.nordstrom.remote.SshUtils;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import org.apache.commons.io.IOUtils;
+
+...
+
+    public void example() {
+        OutputStream os = System.out;
+        SshUtils.shell("ssh://user:pass@host", "ls -la", os);
+        System.out.println(IOUtils.toString(os, Charset.defaultCharset()));
+    }
 ```
 
 This is essentially a hybrid of the previous two secure-shell methods, well-suited for long-running commands that you'd like to leave running while you handle other tasks.
@@ -69,12 +89,21 @@ This is essentially a hybrid of the previous two secure-shell methods, well-suit
 
 ###### Execute Command 
 ```java
-    String connectUri = "ssh://user:pass@host/work/dir/path";
-    String command = "ls -t | head -n1";
-    try (SessionHolder<ChannelExec> session = new SessionHolder<>(ChannelType.EXEC, URI.create(connectUri))) {
-        String workDir = session.getWorkDir();
-        if (workDir != null) command = "cd " + workDir + " && " + command;
-        System.out.println(session, command);
+import java.net.URI;
+import com.nordstrom.remote.SshUtils.SessionHolder;
+import com.nordstrom.remote.SshUtils.ChannelType;
+import com.jcraft.jsch.ChannelExec;
+
+...
+
+    public void example() {
+        String connectUri = "ssh://user:pass@host/work/dir/path";
+        String command = "ls -t | head -n1";
+        try (SessionHolder<ChannelExec> session = new SessionHolder<>(ChannelType.EXEC, URI.create(connectUri))) {
+            String workDir = session.getWorkDir();
+            if (workDir != null) command = "cd " + workDir + " && " + command;
+            System.out.println(session, command);
+        }
     }
 ```
 
