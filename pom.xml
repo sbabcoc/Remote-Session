@@ -26,20 +26,20 @@
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <settings.version>2.3.11</settings.version>
+    <maven.compiler.release>8</maven.compiler.release>
+    <settings.version>3.0.0</settings.version>
     <jsch.version>0.1.55</jsch.version>
     <commons-io.version>2.11.0</commons-io.version>
     <guava.version>31.1-jre</guava.version>
-    <java-utils.version>2.2.0</java-utils.version>
-    <testng.version>6.11</testng.version>
-    <surefire-plugin.version>2.22.0</surefire-plugin.version>
-    <source-plugin.version>3.2.0</source-plugin.version>
-    <javadoc-plugin.version>3.1.1</javadoc-plugin.version>
-    <gpg-plugin.version>1.6</gpg-plugin.version>
-    <staging-plugin.version>1.6.8</staging-plugin.version>
-    <release-plugin.version>2.5.3</release-plugin.version>
+    <java-utils.version>3.0.0</java-utils.version>
+    <testng.version>7.5</testng.version>
+    <compiler-plugin.version>3.10.1</compiler-plugin.version>
+    <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
+    <source-plugin.version>3.2.1</source-plugin.version>
+    <javadoc-plugin.version>3.4.0</javadoc-plugin.version>
+    <gpg-plugin.version>3.0.1</gpg-plugin.version>
+    <staging-plugin.version>1.6.13</staging-plugin.version>
+    <release-plugin.version>3.0.0-M6</release-plugin.version>
     <skipSigning>true</skipSigning>
   </properties>
   
@@ -129,6 +129,11 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${compiler-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${surefire-plugin.version}</version>
         </plugin>
@@ -160,6 +165,10 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
