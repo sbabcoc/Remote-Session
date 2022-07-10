@@ -123,7 +123,7 @@ import com.jcraft.jsch.ChannelExec;
 ```
 
 The implementation of `BatchUtils` demonstrates how to use a couple of important **Remote Session** classes:
-* `SessionHolder` - This is a wrapper class for objects that extend the `Channel` class. The wrapper implements the `Closeable` interface, and `SshUtils` uses a "try-with-resources" block to ensure that the channel is always closed regardless of the outcome of command execution. `SessionHolder` includes these methods (among others):
+* `SessionHolder` - This is a wrapper class for objects that extend the `Channel` class. The wrapper implements the `Closeable` interface, and `BatchUtils` uses a "try-with-resources" block to ensure that the channel is always closed regardless of the outcome of command execution. `SessionHolder` includes these methods (among others):
   * `getChannel` - Get the channel to the remote session created for this `SessionHolder`.
   * `getChannelStream` - Get a new channel stream object for this session.
   * `disconnect` - Disconnect channel and session.
