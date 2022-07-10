@@ -28,23 +28,23 @@ import com.nordstrom.remote.SshUtils.SessionHolder;
  * String output = SshUtils.executeBatch(userName, password, hostName, sudoCmd, batchDir, batchCmd);
  * System.out.println(output);</pre>
  *
-* The implementation of `BatchUtils` demonstrates how to use a couple of important **Remote Session** classes:
-* <p><ul>
-* <li>{@link SessionHolder} - This is a wrapper class for objects that extend the {@link Channel} class. The wrapper
-*     implements the {@link Closeable} interface, and {@link SshUtils} uses a "try-with-resources" block to ensure
-*     that the channel is always closed regardless of the outcome of command execution. <b>SessionHolder</b> includes
-*     these methods (among others): <ul>
-*     <li>{@link SessionHolder#getChannel getChannel} - Get the channel to the remote session created for this <b>SessionHolder</b>.</li>
-*     <li>{@link SessionHolder#getChannelStream getChannelStream} - Get a new channel stream object for this session.</li>
-*     <li>{@link SessionHolder#disconnect disconnect} - Disconnect channel and session.</li>
-*     <li>{@link SessionHolder#assertExitStatus assertExitStatus} - Verifies that the remote task completed normally.</li></ul></li>
-* <li>{@link ChannelStreams} - This class encapsulates input/output operation for the channel attached to this session.
-*     It includes these methods: <ul>
-*     <li>{@link ChannelStreams#waitForInput waitForInput} - Wait for input to be available.</li>
-*     <li>{@link ChannelStreams#writeln writeln} - Write the specified string to the remote host, followed by a carriage return.</li>
-*     <li>{@link ChannelStreams#waitForPrompt waitForPrompt} - Wait for the specified prompt to be received from the remote host.</li>
-*     <li>{@link ChannelStreams#readChannel readChannel} - Read the input from the channel.</li></ul></li></ul>
-   */
+ * The implementation of `BatchUtils` demonstrates how to use a couple of important **Remote Session** classes:
+ * <p><ul>
+ * <li>{@link SessionHolder} - This is a wrapper class for objects that extend the {@link Channel} class. The wrapper
+ *     implements the {@link Closeable} interface, and {@link SshUtils} uses a "try-with-resources" block to ensure
+ *     that the channel is always closed regardless of the outcome of command execution. <b>SessionHolder</b> includes
+ *     these methods (among others): <ul>
+ *     <li>{@link SessionHolder#getChannel getChannel} - Get the channel to the remote session created for this <b>SessionHolder</b>.</li>
+ *     <li>{@link SessionHolder#getChannelStream getChannelStream} - Get a new channel stream object for this session.</li>
+ *     <li>{@link SessionHolder#disconnect disconnect} - Disconnect channel and session.</li>
+ *     <li>{@link SessionHolder#assertExitStatus assertExitStatus} - Verifies that the remote task completed normally.</li></ul></li>
+ * <li>{@link ChannelStreams} - This class encapsulates input/output operation for the channel attached to this session.
+ *     It includes these methods: <ul>
+ *     <li>{@link ChannelStreams#waitForInput waitForInput} - Wait for input to be available.</li>
+ *     <li>{@link ChannelStreams#writeln writeln} - Write the specified string to the remote host, followed by a carriage return.</li>
+ *     <li>{@link ChannelStreams#waitForPrompt waitForPrompt} - Wait for the specified prompt to be received from the remote host.</li>
+ *     <li>{@link ChannelStreams#readChannel readChannel} - Read the input from the channel.</li></ul></li></ul>
+ */
 public class BatchUtils {
 
     private BatchUtils() {
