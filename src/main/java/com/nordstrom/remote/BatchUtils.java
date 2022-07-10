@@ -25,7 +25,7 @@ import com.nordstrom.remote.SshUtils.SessionHolder;
  * String sudoCmd = "sudo su - admin";
  * String batchDir = "/work/dir/path";
  * String batchCmd = "./script.ksh parm1 parm2";
- * String output = SshUtils.executeBatch(userName, password, hostName, sudoCmd, batchDir, batchCmd);
+ * String output = BatchUtils.executeBatch(userName, password, hostName, sudoCmd, batchDir, batchCmd);
  * System.out.println(output);</pre>
  *
  * The implementation of `BatchUtils` demonstrates how to use a couple of important **Remote Session** classes:

@@ -118,7 +118,7 @@ import com.jcraft.jsch.ChannelExec;
     String sudoCmd = "sudo su - admin";
     String batchDir = "/work/dir/path";
     String batchCmd = "./script.ksh parm1 parm2";
-    String output = SshUtils.executeBatch(userName, password, hostName, sudoCmd, batchDir, batchCmd);
+    String output = BatchUtils.executeBatch(userName, password, hostName, sudoCmd, batchDir, batchCmd);
     System.out.println(output);
 ```
 
