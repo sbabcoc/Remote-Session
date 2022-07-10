@@ -31,7 +31,7 @@ import com.nordstrom.remote.SshUtils.SessionHolder;
  * The implementation of `BatchUtils` demonstrates how to use a couple of important **Remote Session** classes:
  * <p><ul>
  * <li>{@link SessionHolder} - This is a wrapper class for objects that extend the {@link Channel} class. The wrapper
- *     implements the {@link Closeable} interface, and {@link SshUtils} uses a "try-with-resources" block to ensure
+ *     implements the {@link Closeable} interface, and <b>BatchUtils</b> uses a "try-with-resources" block to ensure
  *     that the channel is always closed regardless of the outcome of command execution. <b>SessionHolder</b> includes
  *     these methods (among others): <ul>
  *     <li>{@link SessionHolder#getChannel getChannel} - Get the channel to the remote session created for this <b>SessionHolder</b>.</li>
