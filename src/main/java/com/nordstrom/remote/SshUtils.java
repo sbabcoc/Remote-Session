@@ -751,7 +751,7 @@ public final class SshUtils {
          * @param prompt prompt to check for
          * @param input {@link StringBuilder} object
          * @param logger SLF4J {@link Logger} object for output (may be 'null')
-         * @return 'false' is prompt is found or channel is closed; otherwise 'true'
+         * @return 'false' if prompt is found or channel is closed; otherwise 'true'
          * @throws InterruptedException if this thread was interrupted
          * @throws IOException if an I/O error occurs
          */
