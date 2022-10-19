@@ -10,6 +10,20 @@
 
 **Remote Session** wraps the capabilities of **JSch** in a simplified API that handles many of the details related to setting up and managing remote sessions. Originated by [Mykhaylo Adamovych](http://stackoverflow.com/users/448078/mykhaylo-adamovych), the implementation was copied verbatim from a post on [Stack Overflow](http://stackoverflow.com/questions/2405885/run-a-command-over-ssh-with-jsch). JavaDoc has been added for completeness and comprehensibility.
 
+## Continuing Development
+
+The last release of the **JSch** library from the original [SourceForge project](https://sourceforge.net/projects/jsch/) was published 2018-NOV-26. Continuing development of this project has been taken up [here](https://github.com/mwiede/jsch), with new releases published at these artifact coordinates:
+
+| Maven |
+|:---|
+| <pre>&lt;dependency&gt;<br/>&nbsp;&nbsp;&lt;groupId&gt;com.github.mwiede&lt;/groupId&gt;<br/>&nbsp;&nbsp;&lt;artifactId&gt;jsch&lt;/artifactId&gt;<br/>&nbsp;&nbsp;&lt;version&gt;0.2.4&lt;/version&gt;<br/>&lt;/dependency&gt;</pre> |
+
+| Gradle |
+|:---|
+| <pre>dependencies {<br/>&nbsp;&nbsp;compile 'com.github.mwiede:jsch:0.2.4'<br/>}</pre> |
+
+This library is a drop-in replacement for artifacts published from the original project. However, support for older or deprecated algorithms is disabled by default. Information on compatibility and configuration can be found on the project's [README](https://github.com/mwiede/jsch/blob/master/Readme.md#fork-of-jsch-0155) page. 
+
 ## Secure File Transfer
 
 **Remote Session** enables clients to upload and download files via secure file transfer protocol (SFTP).
