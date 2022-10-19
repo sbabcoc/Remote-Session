@@ -12,7 +12,7 @@
 
 ## Continuing Development
 
-The last release of the **JSch** library from the original [SourceForge project](https://sourceforge.net/projects/jsch/) was published 2018-NOV-26. Continuing development of this project has been taken up by Matthias Wiedemann [here](https://github.com/mwiede/jsch), with new releases published at these artifact coordinates:
+The last release of the **JSch** library from the original [SourceForge project](https://sourceforge.net/projects/jsch/) was published 2018-NOV-26. Continuing development of this project has been taken up by **_Matthias Wiedemann_** [here](https://github.com/mwiede/jsch), with new releases published at these artifact coordinates:
 
 | Maven |
 |:---|
@@ -22,7 +22,7 @@ The last release of the **JSch** library from the original [SourceForge project]
 |:---|
 | <pre>dependencies {<br/>&nbsp;&nbsp;compile 'com.github.mwiede:jsch:0.2.4'<br/>}</pre> |
 
-This new incarnation of the **JSch* project is a drop-in replacement for artifacts published from the original project. However, support for older or deprecated algorithms is disabled by default. Information on compatibility and configuration can be found on the project's [README](https://github.com/mwiede/jsch/blob/master/Readme.md#fork-of-jsch-0155) page. 
+This new incarnation of the **JSch** project is a drop-in replacement for artifacts published from the original project. However, support for older or deprecated algorithms is disabled by default. Information on compatibility and configuration can be found on the project's [README](https://github.com/mwiede/jsch/blob/master/Readme.md#fork-of-jsch-0155) page. 
 
 ## Secure File Transfer
 
