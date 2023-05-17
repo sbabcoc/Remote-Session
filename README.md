@@ -171,7 +171,7 @@ The implementation of `BatchUtils` demonstrates how to use a couple of important
 
 ### Setting Details
 
-The **`SSH_KEY_NAME`** setting specifies the path to an SSH key file for authentication to the remote host. If the key file is specified by full path, this is used as-is. Otherwise, the key file must belocated in the .ssh folder of the active user's HOME directory. If the key file is encrypted, you must provide the decryption passphrase in the **`SSH_KEY_PASS`** setting. This also implies the presence of a corresponding `pub` file in the same folder as the key file.
+The **`SSH_KEY_NAME`** setting specifies the path to an SSH key file for authentication to the remote host. If the key file is specified by full path, this is used as-is. Otherwise, the key file must be located in the .ssh folder of the active user's HOME directory. If the key file is encrypted, you must provide the decryption passphrase in the **`SSH_KEY_PASS`** setting. This also implies the presence of a corresponding `pub` file in the same folder as the key file.
 
 If a _known_hosts_ file is stored in the same folder as the SSH key file(s), this _known_hosts_ file will be supplied to **JSch** as your personal Certificate Authority. The **`IGNORE_KNOWN_HOSTS`** setting specifies that this _known_hosts_ file should be ignored.
 
