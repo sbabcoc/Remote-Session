@@ -16,11 +16,11 @@ The last release of the **JSch** library from the original [SourceForge project]
 
 | Maven |
 |:---|
-| <pre>&lt;dependency&gt;<br/>&nbsp;&nbsp;&lt;groupId&gt;com.github.mwiede&lt;/groupId&gt;<br/>&nbsp;&nbsp;&lt;artifactId&gt;jsch&lt;/artifactId&gt;<br/>&nbsp;&nbsp;&lt;version&gt;0.2.4&lt;/version&gt;<br/>&lt;/dependency&gt;</pre> |
+| <pre>&lt;dependency&gt;<br/>&nbsp;&nbsp;&lt;groupId&gt;com.github.mwiede&lt;/groupId&gt;<br/>&nbsp;&nbsp;&lt;artifactId&gt;jsch&lt;/artifactId&gt;<br/>&nbsp;&nbsp;&lt;version&gt;0.2.8&lt;/version&gt;<br/>&lt;/dependency&gt;</pre> |
 
 | Gradle |
 |:---|
-| <pre>dependencies {<br/>&nbsp;&nbsp;compile 'com.github.mwiede:jsch:0.2.4'<br/>}</pre> |
+| <pre>dependencies {<br/>&nbsp;&nbsp;compile 'com.github.mwiede:jsch:0.2.8'<br/>}</pre> |
 
 This new incarnation of the **JSch** project is a drop-in replacement for artifacts published from the original project. However, support for older or deprecated algorithms is disabled by default. Information on compatibility and configuration can be found on the project's [README](https://github.com/mwiede/jsch/blob/master/Readme.md#fork-of-jsch-0155) page. 
 
