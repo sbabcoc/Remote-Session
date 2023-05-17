@@ -148,3 +148,31 @@ The implementation of `BatchUtils` demonstrates how to use a couple of important
   * `waitForPrompt` - Wait for the specified prompt to be received from the remote host.
   * `readChannel` - Read the input from the channel.
   
+## **Remote Session** Settings
+
+**Remote Session** provides a number of important settings that can be configured through system properties or a corresponding `properties` file (_remote.properties_). The library provides default values for all settings in the **RemoteConfig** class.
+
+| Setting | Property Name | Default |
+| --- | --- |:---:|
+| **`SSH_KEY_NAME`** | `remote.ssh.key.name` | `id_rsa` |
+| **`SSH_KEY_PASS`** | `remote.ssh.key.pass` | _(none)_ |
+| **`IGNORE_KNOWN_HOSTS`** | `remote.ignore.known.hosts` | `false` |
+| **`SESSION_CONNECT_TIMEOUT`** | `remote.session.connect.timeout` | `5000` |
+| **`SSH_PORT_NUMBER`** | `remote.ssh.port.number` | `22` |
+| **`TERMINAL_HEIGHT`** | `remote.terminal.height` | `24` |
+| **`TERMINAL_WIDTH`** | `remote.terminal.width` | `132` |
+| **`TERMINAL_H_RESOLUTION`** | `remote.terminal.h.resolution` | `924` |
+| **`TERMINAL_V_RESOLUTION`** | `remote.terminal.v.resolution` | `216` |
+| **`COMPLETION_CHECK_INTERVAL`** | `remote.completion.check.interval` | `100` |
+| **`DISCONNECT_CHECK_ATTEMPTS`** | `remote.disconnect.check.attempts` | `600` |
+| **`DISCONNECT_CHECK_INTERVAL`** | `remote.disconnect.check.interval` | `100` |
+| **`CHANNEL_CHECK_INTERVAL`** | `remote.channel.check.interval` | `100` |
+| **`CHANNEL_BUFFER_SIZE`** | `remote.channel.buffer.size` | `102400` |
+
+### Setting Details
+
+The **`SSH_KEY_NAME`** setting specifies the path to an SSH key file for authentication to the remote host. If the key file is specified by full path, this is used as-is. Otherwise, the key file must belocated in the .ssh folder of the active user's HOME directory. If the key file is encrypted, you must provide the decryption passphrase in the **`SSH_KEY_PASS`** setting. This also implies the presence of a corresponding `pub` file in the same folder as the key file.
+
+If a _known_hosts_ file is stored in the same folder as the SSH key file(s), this _known_hosts_ file will be supplied to **JSch** as your personal Certificate Authority. The **`IGNORE_KNOWN_HOSTS`** setting specifies that this _known_hosts_ file should be ignored.
+
+> **NOTE**: If credentials are specified in the remote host URL, the `SSH_KEY_NAME` and `SSH_KEY_PASS` settings are ignored. Also, no attempt is made to locate a _known_hosts_ file for **JSch**.
