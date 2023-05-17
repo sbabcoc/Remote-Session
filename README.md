@@ -176,3 +176,11 @@ The **`SSH_KEY_NAME`** setting specifies the path to an SSH key file for authent
 If a _known_hosts_ file is stored in the same folder as the SSH key file(s), this _known_hosts_ file will be supplied to **JSch** as your personal Certificate Authority. The **`IGNORE_KNOWN_HOSTS`** setting specifies that this _known_hosts_ file should be ignored.
 
 > **NOTE**: If credentials are specified in the remote host URL, the `SSH_KEY_NAME` and `SSH_KEY_PASS` settings are ignored. Also, no attempt is made to locate a _known_hosts_ file for **JSch**.
+
+The **`SESSION_CONNECT_TIMEOUT`** setting is the interval in milliseconds that **JSch** will wait for socket connection operations to complete. If this value is set to **`0`**, no timeout will be established.
+
+The **`COMPLETION_CHECK_INTERVAL`** setting is the interval in milliseconds between END-OF-FILE checks for remote command execution.
+
+The **`DISCONNECT_CHECK_INTERVAL`** setting in the interval in milliseconds between checks for the closure of the remote session channel.
+
+The **`CHANNEL_CHECK_INTERVAL`** setting is the interval in millisecinds between checks for available input from the remote session channel.
