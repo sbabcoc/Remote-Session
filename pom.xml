@@ -27,12 +27,12 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>8</maven.compiler.release>
-    <settings.version>3.0.5</settings.version>
-    <jsch.version>0.2.8</jsch.version>
-    <commons-io.version>2.11.0</commons-io.version>
-    <guava.version>31.1-jre</guava.version>
-    <java-utils.version>3.1.1</java-utils.version>
-    <testng.version>7.5</testng.version>
+    <settings.version>3.0.6</settings.version>
+    <jsch.version>0.2.24</jsch.version>
+    <commons-io.version>2.18.0</commons-io.version>
+    <guava.version>33.4.6-jre</guava.version>
+    <java-utils.version>3.4.1</java-utils.version>
+    <testng.version>7.5.1</testng.version>
     <compiler-plugin.version>3.10.1</compiler-plugin.version>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
     <source-plugin.version>3.2.1</source-plugin.version>
