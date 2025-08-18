@@ -46,7 +46,7 @@
     <connection>scm:git:https://github.com/sbabcoc/Remote-Session.git</connection>
     <developerConnection>scm:git:https://github.com/sbabcoc/Remote-Session.git</developerConnection>
     <url>https://github.com/sbabcoc/Remote-Session/tree/master</url>
-    <tag>remote-session-3.1.0</tag>
+    <tag>remote-session-3.0.3</tag>
   </scm>
 
   <distributionManagement>
@@ -180,5 +180,5 @@
       </properties>
     </profile>
   </profiles>
-  <version>3.1.0</version>
+  <version>3.1.1-SNAPSHOT</version>
 </project>
