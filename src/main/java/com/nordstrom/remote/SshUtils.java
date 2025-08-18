@@ -5,7 +5,6 @@ import static org.apache.commons.io.FilenameUtils.getFullPath;
 import static org.apache.commons.io.FilenameUtils.getName;
 import static org.apache.commons.lang3.StringUtils.trim;
 
-import com.google.common.collect.ImmutableMap;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
@@ -34,6 +33,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
@@ -60,15 +60,27 @@ public final class SshUtils {
     private static final String SSH = "ssh";
     private static final String FILE = "file";
     
+    /**
+     * Channel types for {@link SessionHolder} objects
+     */
     public enum ChannelType {
+    	/** raw SSH session channel, foundation for shell/exec/subsystem */
         SESSION("session"),
+    	/** interactive login shell on the remote host (stdin/stdout/pty) */
         SHELL("shell"),
+    	/** run a single remote command (non-interactive) */
         EXEC("exec"),
+    	/** X11 forwarding channel */
         X11("x11"),
+    	/** SSH agent forwarding */
         AGENT_FORWARDING("auth-agent@openssh.com"),
+    	/** direct TCP/IP forwarding (local → remote target) */
         DIRECT_TCPIP("direct-tcpip"),
+    	/** reverse port forwarding (remote → local target) */
         FORWARDED_TCPIP("forwarded-tcpip"),
+    	/** SFTP subsystem client for file transfer */
         SFTP("sftp"),
+    	/** request a named subsystem (e.g. - "{@code sftp}") */
         SUBSYSTEM("subsystem");
         
         private String name;
@@ -344,7 +356,7 @@ public final class SshUtils {
          * @param uri SSH connection URI
          */
         public SessionHolder(ChannelType channelType, URI uri) {
-            this(channelType, uri, ImmutableMap.of("StrictHostKeyChecking", "no"));
+            this(channelType, uri, Collections.singletonMap("StrictHostKeyChecking", "no"));
         }
 
         /**

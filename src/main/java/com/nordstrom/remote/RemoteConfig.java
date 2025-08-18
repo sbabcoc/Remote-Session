@@ -8,6 +8,9 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import com.nordstrom.automation.settings.SettingsCore;
 
+/**
+ * This class declares settings and methods used to configure the <b>JSch</b> library.
+ */
 public class RemoteConfig extends SettingsCore<RemoteConfig.RemoteSettings> {
     
     private static final String SETTINGS_FILE = "remote.properties";
@@ -19,6 +22,14 @@ public class RemoteConfig extends SettingsCore<RemoteConfig.RemoteSettings> {
     private static final int KILO = 2 ^ 10;
     private static final int BUFFER_SIZE = 100 * KILO;
     
+    /**
+     * This enumeration declares the settings that enable you to control the parameters
+     * that configure the <b>JSch</b> library.
+     * <p>
+     * Each setting is defined by a constant name and System property key. Many settings
+     * also define default values. Note that all of these settings can be overridden via
+     * the {@code remote.properties} file and System property declarations.
+     */
     public enum RemoteSettings implements SettingsCore.SettingsAPI {
         /** name: <b>remote.ssh.key.name</b> <br> default: <b>id_rsa</b> */
         SSH_KEY_NAME("remote.ssh.key.name", "id_rsa"),
@@ -119,6 +130,11 @@ public class RemoteConfig extends SettingsCore<RemoteConfig.RemoteSettings> {
         return null;
     }
     
+    /**
+     * Get the path to the current user's SSH folder.
+     * 
+     * @return user SSH folder path (i.e. - "{@code ~/.ssh}")
+     */
     public Path getSshFolderPath() {
         return Paths.get(System.getProperty("user.home"), ".ssh");
     }
