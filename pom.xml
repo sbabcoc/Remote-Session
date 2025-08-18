@@ -46,13 +46,13 @@
     <connection>scm:git:https://github.com/sbabcoc/Remote-Session.git</connection>
     <developerConnection>scm:git:https://github.com/sbabcoc/Remote-Session.git</developerConnection>
     <url>https://github.com/sbabcoc/Remote-Session/tree/master</url>
-    <tag>remote-session-3.0.3</tag>
+    <tag>remote-session-3.1.0</tag>
   </scm>
 
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
-      <url>>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots</url>
+      <url>&gt;https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots</url>
     </snapshotRepository>
     <repository>
       <id>ossrh</id>
@@ -180,5 +180,5 @@
       </properties>
     </profile>
   </profiles>
-  <version>3.0.6-SNAPSHOT</version>
+  <version>3.1.0</version>
 </project>
