@@ -27,21 +27,22 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>8</maven.compiler.release>
-    <settings.version>3.0.10</settings.version>
-    <jsch.version>2.27.2</jsch.version>
-    <commons-io.version>2.20.0</commons-io.version>
-    <java-utils.version>3.4.1</java-utils.version>
+    <settings.version>4.0.0</settings.version>
+    <jsch.version>2.27.7</jsch.version>
+    <commons-io.version>2.21.0</commons-io.version>
+    <java-utils.version>4.0.0</java-utils.version>
+    <!-- TestNG 7.6+ requires Java 11; 7.5.1 is the last Java 8 compatible release -->
     <testng.version>7.5.1</testng.version>
     <compiler-plugin.version>3.14.0</compiler-plugin.version>
-    <surefire-plugin.version>3.5.3</surefire-plugin.version>
+    <surefire-plugin.version>3.5.4</surefire-plugin.version>
     <source-plugin.version>3.3.1</source-plugin.version>
-    <javadoc-plugin.version>3.11.2</javadoc-plugin.version>
+    <javadoc-plugin.version>3.12.0</javadoc-plugin.version>
     <gpg-plugin.version>3.2.8</gpg-plugin.version>
     <staging-plugin.version>1.7.0</staging-plugin.version>
-    <release-plugin.version>3.1.1</release-plugin.version>
+    <release-plugin.version>3.3.1</release-plugin.version>
     <skipSigning>true</skipSigning>
   </properties>
-  
+
   <scm>
     <connection>scm:git:https://github.com/sbabcoc/Remote-Session.git</connection>
     <developerConnection>scm:git:https://github.com/sbabcoc/Remote-Session.git</developerConnection>
@@ -52,7 +53,7 @@
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
-      <url>&gt;https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots</url>
+      <url>https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots</url>
     </snapshotRepository>
     <repository>
       <id>ossrh</id>
@@ -134,8 +135,6 @@
               <goal>sign</goal>
             </goals>
             <configuration>
-              <keyname>${gpg.keyname}</keyname>
-              <passphraseServerId>${gpg.keyname}</passphraseServerId>
               <skip>${skipSigning}</skip>
             </configuration>
           </execution>
