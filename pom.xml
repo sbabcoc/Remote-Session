@@ -2,6 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.nordstrom.tools</groupId>
   <artifactId>remote-session</artifactId>
+  <version>4.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   
   <name>Remote Session</name>
@@ -28,7 +29,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>8</maven.compiler.release>
     <settings.version>4.0.0</settings.version>
-    <jsch.version>2.27.7</jsch.version>
+    <jsch.version>2.27.8</jsch.version>
     <commons-io.version>2.21.0</commons-io.version>
     <java-utils.version>4.0.0</java-utils.version>
     <!-- TestNG 7.6+ requires Java 11; 7.5.1 is the last Java 8 compatible release -->
@@ -179,5 +180,4 @@
       </properties>
     </profile>
   </profiles>
-  <version>4.0.1-SNAPSHOT</version>
 </project>
