@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.nordstrom.tools</groupId>
   <artifactId>remote-session</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.1</version>
   <packaging>jar</packaging>
   
   <name>Remote Session</name>
@@ -48,7 +48,7 @@
     <connection>scm:git:https://github.com/sbabcoc/Remote-Session.git</connection>
     <developerConnection>scm:git:https://github.com/sbabcoc/Remote-Session.git</developerConnection>
     <url>https://github.com/sbabcoc/Remote-Session/tree/master</url>
-    <tag>remote-session-3.0.3</tag>
+    <tag>remote-session-4.0.1</tag>
   </scm>
 
   <distributionManagement>
