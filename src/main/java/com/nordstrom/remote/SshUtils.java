@@ -137,7 +137,10 @@ public final class SshUtils {
             LOG.info("Uploading {} --> {}", from, session.getMaskedUri());
             ChannelSftp channel = session.getChannel();
             channel.connect();
-            channel.cd(to.getPath());
+            String path = to.getPath();
+            if (path != null && !path.isEmpty()) {
+                channel.cd(path);
+            }
             channel.put(fis, getName(from.getPath()));
 
         } catch (Exception e) {
@@ -160,7 +163,10 @@ public final class SshUtils {
             LOG.info("Downloading {} --> {}", session.getMaskedUri(), to);
             ChannelSftp channel = session.getChannel();
             channel.connect();
-            channel.cd(getFullPath(from.getPath()));
+            String path = getFullPath(from.getPath());
+            if (path != null && !path.isEmpty()) {
+            	channel.cd(path);
+            }
             channel.get(getName(from.getPath()), bos);
 
         } catch (Exception e) {
@@ -218,8 +224,9 @@ public final class SshUtils {
                 PipedInputStream in = new PipedInputStream(pipe);
                 PrintWriter pw = new PrintWriter(pipe)) {
 
-            if (session.getWorkDir() != null) {
-                pw.println("cd " + session.getWorkDir());
+            String workDir = session.getWorkDir();
+        	if (workDir != null && !workDir.isEmpty()) {
+                pw.println("cd " + workDir);
             }
             
             pw.println(script);
@@ -269,8 +276,7 @@ public final class SshUtils {
         try (SessionHolder<ChannelExec> session = new SessionHolder<>(ChannelType.EXEC, URI.create(connectUri))) {
             String changeDir = "";
             String workDir = session.getWorkDir();
-            
-            if (workDir != null) {
+            if (workDir != null && !workDir.isEmpty()) {
                 changeDir = "cd " + workDir + " && ";
             }
             
