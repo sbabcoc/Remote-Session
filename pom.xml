@@ -43,7 +43,6 @@
     <gpg-plugin.version>3.2.8</gpg-plugin.version>
     <staging-plugin.version>1.7.0</staging-plugin.version>
     <release-plugin.version>3.3.1</release-plugin.version>
-    <skipSigning>true</skipSigning>
   </properties>
 
   <scm>
@@ -156,7 +155,12 @@
               <goal>sign</goal>
             </goals>
             <configuration>
-              <skip>${skipSigning}</skip>
+              <gpgArguments>
+                <arg>--batch</arg>
+                <arg>--pinentry-mode</arg>
+                <arg>loopback</arg>
+              </gpgArguments>
+              <passphraseServerId>${gpg.keyname}</passphraseServerId>
             </configuration>
           </execution>
         </executions>
@@ -191,13 +195,4 @@
       </plugin>
     </plugins>
   </build>
-  
-  <profiles>
-    <profile>
-      <id>signing</id>
-      <properties>
-        <skipSigning>false</skipSigning>
-      </properties>
-    </profile>
-  </profiles>
 </project>
