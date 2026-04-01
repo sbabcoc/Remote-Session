@@ -181,7 +181,7 @@ The **`SESSION_CONNECT_TIMEOUT`** setting is the interval in milliseconds that *
 
 The **`COMPLETION_CHECK_INTERVAL`** setting is the interval in milliseconds between END-OF-FILE checks for remote command execution.
 
-The **`DISCONNECT_CHECK_INTERVAL`** setting in the interval in milliseconds between checks for the closure of the remote session channel.
+The **`DISCONNECT_CHECK_INTERVAL`** setting is the interval in milliseconds between checks for the closure of the remote session channel.
 
 The **`CHANNEL_CHECK_INTERVAL`** setting is the interval in millisecinds between checks for available input from the remote session channel.
 
