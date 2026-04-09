@@ -12,6 +12,8 @@ import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UserInfo;
+import com.nordstrom.remote.RemoteConfig.HostTrustStrategy;
 import com.nordstrom.remote.RemoteConfig.RemoteSettings;
 
 import org.apache.commons.io.IOUtils;
@@ -64,23 +66,23 @@ public final class SshUtils {
      * Channel types for {@link SessionHolder} objects
      */
     public enum ChannelType {
-    	/** raw SSH session channel, foundation for shell/exec/subsystem */
+        /** raw SSH session channel, foundation for shell/exec/subsystem */
         SESSION("session"),
-    	/** interactive login shell on the remote host (stdin/stdout/pty) */
+        /** interactive login shell on the remote host (stdin/stdout/pty) */
         SHELL("shell"),
-    	/** run a single remote command (non-interactive) */
+        /** run a single remote command (non-interactive) */
         EXEC("exec"),
-    	/** X11 forwarding channel */
+        /** X11 forwarding channel */
         X11("x11"),
-    	/** SSH agent forwarding */
+        /** SSH agent forwarding */
         AGENT_FORWARDING("auth-agent@openssh.com"),
-    	/** direct TCP/IP forwarding (local → remote target) */
+        /** direct TCP/IP forwarding (local → remote target) */
         DIRECT_TCPIP("direct-tcpip"),
-    	/** reverse port forwarding (remote → local target) */
+        /** reverse port forwarding (remote → local target) */
         FORWARDED_TCPIP("forwarded-tcpip"),
-    	/** SFTP subsystem client for file transfer */
+        /** SFTP subsystem client for file transfer */
         SFTP("sftp"),
-    	/** request a named subsystem (e.g. - "{@code sftp}") */
+        /** request a named subsystem (e.g. - "{@code sftp}") */
         SUBSYSTEM("subsystem");
         
         private String name;
@@ -165,7 +167,7 @@ public final class SshUtils {
             channel.connect();
             String path = getFullPath(from.getPath());
             if (path != null && !path.isEmpty()) {
-            	channel.cd(path);
+                channel.cd(path);
             }
             channel.get(getName(from.getPath()), bos);
 
@@ -225,7 +227,7 @@ public final class SshUtils {
                 PrintWriter pw = new PrintWriter(pipe)) {
 
             String workDir = session.getWorkDir();
-        	if (workDir != null && !workDir.isEmpty()) {
+            if (workDir != null && !workDir.isEmpty()) {
                 pw.println("cd " + workDir);
             }
             
@@ -386,6 +388,8 @@ public final class SshUtils {
          * @return new SSH session object
          */
         private Session newSession(Map<String, String> props) {
+            RemoteConfig remoteConfig = RemoteConfig.getConfig();
+            
             try {
                 Properties config = new Properties();
                 config.putAll(props);
@@ -393,34 +397,43 @@ public final class SshUtils {
                 JSch jsch = new JSch();
                 
                 String pass = getPass();
-                if (pass == null) {
-                    RemoteConfig remoteConfig = RemoteConfig.getConfig();
-                    Path keyPath = remoteConfig.getKeyPath();
-                    
-                    if (keyPath == null) {
-                        throw new RemoteCredentialsUnspecifiedException();
-                    }
-                    
-                    String keyPass = remoteConfig.getString(RemoteSettings.SSH_KEY_PASS.key());
-                    if (keyPass != null) {
-                        Path pubPath = keyPath.resolveSibling(keyPath.getFileName() + ".pub");
-                        jsch.addIdentity(keyPath.toString(), pubPath.toString(), keyPass.getBytes());
+                UserInfo userInfo = getUserInfo();
+                Path keyPath = remoteConfig.getKeyPath();
+                Path pubPath = remoteConfig.getPubPath();
+                Path knownHosts = remoteConfig.getKnownHosts();
+                HostTrustStrategy strategy = remoteConfig.getTrustStrategy();
+                
+                // if none specified of password/private key/UserInfo class
+                if ((pass == null) && (keyPath == null) && (userInfo == null)) {
+                    throw new RemoteCredentialsUnspecifiedException();
+                }
+                
+                // if private key spec'd
+                if (keyPath != null) {
+                    // if public key spec'd
+                    if (pubPath != null) {
+                        // add identity, specifying public key
+                        jsch.addIdentity(keyPath.toString(), pubPath.toString(), getPassPhrase());
+                    // otherwise (no public key spec'd)
                     } else {
-                        jsch.addIdentity(keyPath.toString());
+                        // add identity, omitting public key
+                        jsch.addIdentity(keyPath.toString(), getPassPhrase());
                     }
                     
-                    if ( ! remoteConfig.getBoolean(RemoteSettings.IGNORE_KNOWN_HOSTS.key())) {
-                        Path knownHosts = keyPath.resolveSibling("known_hosts");
-                        if (knownHosts.toFile().exists()) {
-                            jsch.setKnownHosts(knownHosts.toString());
-                        }
+                    if (knownHosts != null) {
+                        jsch.setKnownHosts(knownHosts.toString());
                     }
                 }
 
                 Session newSession = jsch.getSession(getUser(), getHost(), getPort());
+                newSession.setConfig("StrictHostKeyChecking", strategy.getJschValue());
                 
                 if (pass != null) {
                     newSession.setPassword(pass);
+                }
+                
+                if (userInfo != null) {
+                    newSession.setUserInfo(userInfo);
                 }
                 
                 newSession.setDaemonThread(true);
@@ -430,6 +443,38 @@ public final class SshUtils {
                 return newSession;
             } catch (JSchException e) {
                 throw new RemoteSessionInstantiationException("Cannot create session for " + getMaskedUri(), e);
+            }
+        }
+        
+        private static byte[] getPassPhrase() {
+            // get SSH key pass-phrase
+            String keyPass = RemoteConfig.getConfig().getString(RemoteSettings.SSH_KEY_PASS.key());
+            // get bytes of pass-phrase; 'null' if no pass-phrase was spec'd
+            return (keyPass != null) ? keyPass.getBytes() : null;
+        }
+        
+        private static UserInfo getUserInfo() {
+            String userInfoClass = RemoteConfig.getConfig().getString(RemoteSettings.USERINFO_CLASS.key());
+            if (userInfoClass == null) return null;
+            
+            try {
+                // 1. Load the class
+                Class<?> clazz = Class.forName(userInfoClass);
+                
+                // 2. Validate that it implements UserInfo
+                // This replaces manual "instanceof" checks on the object later
+                Class<? extends UserInfo> userInfoSubclass = clazz.asSubclass(UserInfo.class);
+                
+                // 3. Instantiate using the no-args constructor
+                return userInfoSubclass.getDeclaredConstructor().newInstance();
+                
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException("UserInfo implementation not found: " + userInfoClass, e);
+            } catch (ClassCastException e) {
+                throw new IllegalArgumentException("Class does not implement UserInfo: " + userInfoClass, e);
+            } catch (Exception e) {
+                // Handles NoSuchMethodException, InstantiationException, IllegalAccessException, etc.
+                throw new RuntimeException("Failed to initialize UserInfo: " + userInfoClass, e);
             }
         }
         
@@ -553,11 +598,20 @@ public final class SshUtils {
         }
 
         /**
-         * Get the user specified in the URI for this {@link SessionHolder}
+         * Get the remote account user name.
+         * <p>
+         * <b>NOTE</b>: This method first checks the <b>ACCOUNT_USERNAME</b> setting of the
+         * configuration. If this setting is undefined, it checks for user information in the
+         * SSH connection URI. If this component is absent, {@code null} is returned.
          * 
-         * @return user specified in the SSH connection URI
+         * @return remote account user name (may be {@code null})
          */
         public String getUser() {
+            RemoteConfig config = RemoteConfig.getConfig();
+            String username = config.getString(RemoteSettings.ACCOUNT_USERNAME.key());
+            if (username != null) {
+                return username;
+            }
             String userInfo = uri.getUserInfo();
             if (userInfo != null) {
                 return userInfo.split(":")[0];
@@ -566,11 +620,20 @@ public final class SshUtils {
         }
 
         /**
-         * Get the password specified in the URI for this {@link SessionHolder}
+         * Get the remote account password.
+         * <p>
+         * <b>NOTE</b>: This method first checks the <b>ACCOUNT_PASSWORD</b> setting of the
+         * configuration. If this setting is undefined, it checks for user information in the
+         * SSH connection URI. If this component is absent, {@code null} is returned.
          * 
-         * @return password specified in the SSH connection URI
+         * @return remote account password (may be {@code null})
          */
         private String getPass() {
+            RemoteConfig config = RemoteConfig.getConfig();
+            String password = config.getString(RemoteSettings.ACCOUNT_PASSWORD.key());
+            if (password != null) {
+                return password;
+            }
             String userInfo = uri.getUserInfo();
             if (userInfo != null) {
                 String[] userBits = userInfo.split(":");

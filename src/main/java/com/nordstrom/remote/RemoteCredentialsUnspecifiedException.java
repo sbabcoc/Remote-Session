@@ -11,7 +11,7 @@ public class RemoteCredentialsUnspecifiedException extends RuntimeException {
      * Constructor for a new "remote credentials unspecified" exception.
      */
     public RemoteCredentialsUnspecifiedException() {
-        super("Neither password nor private key were specified");
+        super("You must specify at least one: password/private key/UserInfo class");
     }
 
 }

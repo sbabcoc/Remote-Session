@@ -3,6 +3,7 @@ package com.nordstrom.remote;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
@@ -31,12 +32,22 @@ public class RemoteConfig extends SettingsCore<RemoteConfig.RemoteSettings> {
      * the {@code remote.properties} file and System property declarations.
      */
     public enum RemoteSettings implements SettingsCore.SettingsAPI {
+        /** name: <b>remote.account.username</b> <br> default: {@code null} */
+        ACCOUNT_USERNAME("remote.account.username", null),
+        /** name: <b>remote.account.password</b> <br> default: {@code null} */
+        ACCOUNT_PASSWORD("remote.account.password", null),
         /** name: <b>remote.ssh.key.name</b> <br> default: <b>id_rsa</b> */
         SSH_KEY_NAME("remote.ssh.key.name", "id_rsa"),
+        /** name: <b>remote.ssh.pub.name</b> <br> default: {@code null} */
+        SSH_PUB_NAME("remote.ssh.pub.name", null),
         /** name: <b>remote.ssh.key.pass</b> <br> default: {@code null} */
         SSH_KEY_PASS("remote.ssh.key.pass", null),
-        /** name: <b>remote.ignore.known.hosts</b> <br> default: <b>false</b> */
-        IGNORE_KNOWN_HOSTS("remote.ignore.known.hosts", "false"),
+        /** name: <b>remote.userinfo.class</b> <br> default: {@code null} */
+        USERINFO_CLASS("remote.userinfo.class", null),
+        /** name: <b>remote.known.hosts.path</b> <br> default: <b>known_hosts</b> */
+        KNOWN_HOSTS_NAME("remote.known.hosts.path", "known_hosts"),
+        /** name: <b>remote.trust.strategy</b> <br> default: <b>yes</b> */
+        TRUST_STRATEGY("remote.trust.strategy", "yes"),
         /** name: <b>remote.session.connect.timeout</b> <br> default: <b>5000</b> */
         SESSION_CONNECT_TIMEOUT("remote.session.connect.timeout", "5000"),
         /** name: <b>remote.ssh.port.number</b> <br> default: <b>22</b> */
@@ -78,7 +89,90 @@ public class RemoteConfig extends SettingsCore<RemoteConfig.RemoteSettings> {
             return defaultValue;
         }
     }
+    
+    /**
+     * Defines the security strategies for verifying the identity of a remote host
+     * during an SSH handshake. This maps directly to the 'StrictHostKeyChecking'
+     * configuration in the JSch library.
+     */
+    public enum HostTrustStrategy {
+        
+        /**
+         * Corresponds to JSch {@code yes}. 
+         * <p>
+         * The host's public key must exist in the {@code known_hosts} file. If the 
+         * key is missing or does not match, the connection will be rejected. 
+         * This is the most secure option and prevents Man-in-the-Middle (MITM) attacks.
+         * </p>
+         */
+        STRICT("yes"),
+        
+        /**
+         * Corresponds to JSch {@code ask}.
+         * <p>
+         * If a host is not found in the {@code known_hosts} file, the user is 
+         * prompted via a {@code UserInfo} implementation to accept or reject the 
+         * new key. Successfully accepted keys are appended to the {@code known_hosts} 
+         * file (requires write permissions).
+         * </p>
+         */
+        INTERACTIVE("ask"),
+        
+        /**
+         * Corresponds to JSch {@code no}.
+         * <p>
+         * Blindly trusts any host key presented by the remote server. The 
+         * {@code known_hosts} file is ignored for verification purposes.
+         * <b>Warning:</b> This is insecure and should only be used in trusted, 
+         * transient, or isolated test environments.
+         * </p>
+         */
+        ANONYMOUS("no");
 
+        private final String jschValue;
+
+        /**
+         * Constructs a strategy with its associated JSch protocol string.
+         * 
+         * @param jschValue The internal JSch configuration string ('yes', 'ask', or 'no').
+         */
+        HostTrustStrategy(String jschValue) {
+            this.jschValue = jschValue;
+        }
+
+        /**
+         * Gets the string value expected by the JSch {@code StrictHostKeyChecking} configuration.
+         * 
+         * @return The JSch-compatible string value.
+         */
+        public String getJschValue() {
+            return jschValue;
+        }
+
+        /**
+         * Converts a string to its corresponding {@link HostTrustStrategy} constant.
+         * This method is case-insensitive and matches against both the constant names 
+         * (e.g., "STRICT") and their associated JSch values (e.g., "yes").
+         * 
+         * @param value The string to convert.
+         * @return The matching {@link HostTrustStrategy} constant.
+         * @throws IllegalArgumentException if the provided value is {@code null} or 
+         * does not match a valid strategy.
+         */
+        public static HostTrustStrategy fromString(String value) {
+            if (value == null) {
+                throw new IllegalArgumentException("HostTrustStrategy value cannot be null");
+            }
+            
+            return Arrays.stream(HostTrustStrategy.values())
+                    .filter(strategy -> strategy.name().equalsIgnoreCase(value) ||
+                                        strategy.jschValue.equalsIgnoreCase(value))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Unknown HostTrustStrategy: " + value
+                            + ". Valid options are: yes (STRICT), ask (INTERACTIVE), no (ANONYMOUS)."));
+        }
+    }
+    
     private static final RemoteConfig remoteConfig;
     
     static {
@@ -109,25 +203,155 @@ public class RemoteConfig extends SettingsCore<RemoteConfig.RemoteSettings> {
     }
     
     /**
-     * Get the path to the specified SSH key file.<br>
-     * <b>NOTE</b>: If the key file is specified by full path, this is used as-is. Otherwise, the key file must be
-     * located in the {@code .ssh} folder of the active user's {@code HOME} directory.
+     * Get the path to the specified SSH private key file.<br>
+     * <b>NOTE</b>: If the private key file is specified by full path, this is used as-is. Otherwise, the
+     * key file must be located in the {@code .ssh} folder of the active user's {@code HOME} directory.
      * 
-     * @return SSH key file path; 'null' if indicated file doesn't exist
+     * @return SSH public key file path; 'null' if indicated file doesn't exist
      */
     public Path getKeyPath() {
-        String keyName = RemoteConfig.getConfig().getString(RemoteSettings.SSH_KEY_NAME.key());
+        // get SSH private key name
+        String keyName = remoteConfig.getString(RemoteSettings.SSH_KEY_NAME.key());
+        // if private key name is specified
         if ( ! ((keyName == null) || keyName.isEmpty())) {
+            // evaluate name as key path
             Path keyPath = Paths.get(keyName);
+            // if key path exists
             if (keyPath.toFile().exists()) {
+                // return path
                 return keyPath;
             }
+            
+            // evaluate name as child of ~/.ssh folder
             keyPath = getSshFolderPath().resolve(keyName);
+            // if key path exists in ~/.ssh
             if (keyPath.toFile().exists()) {
+                // return path
                 return keyPath;
             }
         }
+        
         return null;
+    }
+    
+    /**
+     * Get the path to the specified SSH public key file.<br>
+     * <b>NOTE</b>: If the public key file is specified by full path, this is used as-is. Otherwise, the
+     * key file must be located in the {@code .ssh} folder of the active user's {@code HOME} directory.
+     * 
+     * @return SSH key file path; 'null' if indicated file doesn't exist
+     */
+    public Path getPubPath() {
+        Path keyPath = getKeyPath();
+        if (keyPath == null) return null;
+        
+        // get SSH public key name
+        String pubName = remoteConfig.getString(RemoteSettings.SSH_PUB_NAME.key());
+        // if public key name is unspecified
+        if ((pubName == null) || pubName.isEmpty()) {
+            // assemble public key name
+            pubName = keyPath.toString() + ".pub";
+        }
+        
+        // if public key name is specified
+        if ( ! ((pubName == null) || pubName.isEmpty())) {
+            // evaluate name as key path
+            Path pubPath = Paths.get(pubName);
+            // if key path exists
+            if (pubPath.toFile().exists()) {
+                // return path
+                return pubPath;
+            }
+            
+            pubPath = keyPath.resolveSibling(pubName);
+            // if public key is sibling
+            if (pubPath.toFile().exists()) {
+                // return path
+                return pubPath;
+            }
+            
+            // evaluate name as child of ~/.ssh folder
+            pubPath = getSshFolderPath().resolve(pubName);
+            // if key path exists in ~/.ssh
+            if (pubPath.toFile().exists()) {
+                // return path
+                return pubPath;
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Get the path to the specified SSH known hosts file.<br>
+     * <b>NOTE</b>: If the known hosts file is specified by full path, this is used as-is. Otherwise, the
+     * file must be located in the {@code .ssh} folder of the active user's {@code HOME} directory.
+     * 
+     * @return SSH known hosts path; 'null' if indicated file doesn't exist
+     */
+    public Path getKnownHosts() {
+        HostTrustStrategy trustStrategy = getTrustStrategy();
+        if (trustStrategy == HostTrustStrategy.ANONYMOUS) {
+            return null;
+        }
+        
+        Path path;
+        Path knownHostsPath = null;
+        Path keyPath = getKeyPath();
+        String knownHostsName = remoteConfig.getString(RemoteSettings.KNOWN_HOSTS_NAME.key());
+        
+        // if known hosts name is specified
+        if ( ! ((knownHostsName == null) || knownHostsName.isEmpty())) {
+            // evaluate name as known hosts path
+            path = Paths.get(knownHostsName);
+            // if key path exists
+            if (path.toFile().exists()) {
+                // 
+                knownHostsPath = path;
+            }
+            
+            if ((knownHostsPath == null) && (keyPath != null)) {
+                path = keyPath.resolveSibling(knownHostsName);
+                // if public key is sibling
+                if (path.toFile().exists()) {
+                    // 
+                    knownHostsPath = path;
+                }
+            }
+            
+            if (knownHostsPath == null) {
+                // evaluate name as child of ~/.ssh folder
+                path = getSshFolderPath().resolve(knownHostsName);
+                // if key path exists in ~/.ssh
+                if (path.toFile().exists()) {
+                    // 
+                    knownHostsPath = path;
+                }
+            }
+            
+            if (trustStrategy == HostTrustStrategy.STRICT) {
+                if (knownHostsPath == null) {
+                    throw new IllegalStateException(
+                            "STRICT mode requires a known_hosts file, but none was found.");
+                }
+            } else if (trustStrategy == HostTrustStrategy.INTERACTIVE) {
+                if ((knownHostsPath != null) && !knownHostsPath.toFile().canWrite()) {
+                    throw new IllegalStateException(
+                            "INTERACTIVE mode requires write access to: " + knownHostsPath.toAbsolutePath());
+                }
+            }
+        }
+        
+        return knownHostsPath;
+    }
+    
+    /**
+     * Get host trust strategy.
+     * 
+     * @return {@link HostTrustStrategy} constant`
+     */
+    public HostTrustStrategy getTrustStrategy() {
+        return HostTrustStrategy.fromString(remoteConfig.getString(RemoteSettings.TRUST_STRATEGY.key()));
     }
     
     /**
