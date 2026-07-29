@@ -24,6 +24,38 @@ The last release of the **JSch** library from the original [SourceForge project]
 
 This new incarnation of the **JSch** project is a drop-in replacement for artifacts published from the original project. However, support for older or deprecated algorithms is disabled by default. Information on compatibility and configuration can be found on the project's [README](https://github.com/mwiede/jsch/blob/master/Readme.md#fork-of-jsch-0155) page. 
 
+## Authentication
+
+**Remote Session** supports two ways to authenticate to a remote host: embedding credentials in the connection URI, or configuring them through **Remote Session** settings. The examples elsewhere in this README use the URI form for brevity, but SSH key-based authentication is generally preferable for anything beyond quick, interactive use.
+
+###### Password Authentication (URI)
+Embed the account credentials directly in the connection URI:
+```java
+    SshUtils.exec("ssh://user:pass@host", "ls -la");
+```
+
+###### SSH Key Authentication
+Omit the password from the URI and let **Remote Session** locate your SSH private key instead. By default, this is `~/.ssh/id_rsa`:
+```java
+    SshUtils.exec("ssh://user@host", "ls -la");
+```
+
+The user name can still come from the URI as shown above, or be supplied via the **`ACCOUNT_USERNAME`** setting instead — in which case the URI need only specify the host:
+```java
+    // remote.properties: remote.account.username=user
+    SshUtils.exec("ssh://host", "ls -la");
+```
+
+To use a private key file other than the default, or one that's encrypted, configure the relevant settings — for example, via `remote.properties`:
+```properties
+remote.ssh.key.name=/path/to/id_ed25519
+remote.ssh.key.pass=key-passphrase
+```
+
+If the corresponding public key doesn't follow the `<private-key>.pub` naming convention, specify its path explicitly with **`SSH_PUB_NAME`**. See [**Remote Session** Settings](#remote-session-settings) below for the complete set of authentication- and host-trust-related settings, including **`USERINFO_CLASS`** and **`TRUST_STRATEGY`** for interactive host-key confirmation.
+
+> **NOTE**: Whichever method is used, a private key is only attempted if `getKeyPath()` resolves to an existing file — if no key, password, or `UserInfo` implementation is available, `SshUtils` raises `RemoteCredentialsUnspecifiedException`.
+
 ## Secure File Transfer
 
 **Remote Session** enables clients to upload and download files via secure file transfer protocol (SFTP).
