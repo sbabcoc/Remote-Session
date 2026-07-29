@@ -16,11 +16,11 @@ The last release of the **JSch** library from the original [SourceForge project]
 
 | Maven |
 |:---|
-| <pre>&lt;dependency&gt;<br/>&nbsp;&nbsp;&lt;groupId&gt;com.github.mwiede&lt;/groupId&gt;<br/>&nbsp;&nbsp;&lt;artifactId&gt;jsch&lt;/artifactId&gt;<br/>&nbsp;&nbsp;&lt;version&gt;2.28.0&lt;/version&gt;<br/>&lt;/dependency&gt;</pre> |
+| <pre>&lt;dependency&gt;<br/>&nbsp;&nbsp;&lt;groupId&gt;com.github.mwiede&lt;/groupId&gt;<br/>&nbsp;&nbsp;&lt;artifactId&gt;jsch&lt;/artifactId&gt;<br/>&nbsp;&nbsp;&lt;version&gt;2.28.5&lt;/version&gt;<br/>&lt;/dependency&gt;</pre> |
 
 | Gradle |
 |:---|
-| <pre>dependencies {<br/>&nbsp;&nbsp;compile 'com.github.mwiede:jsch:2.28.0'<br/>}</pre> |
+| <pre>dependencies {<br/>&nbsp;&nbsp;compile 'com.github.mwiede:jsch:2.28.5'<br/>}</pre> |
 
 This new incarnation of the **JSch** project is a drop-in replacement for artifacts published from the original project. However, support for older or deprecated algorithms is disabled by default. Information on compatibility and configuration can be found on the project's [README](https://github.com/mwiede/jsch/blob/master/Readme.md#fork-of-jsch-0155) page. 
 
@@ -154,9 +154,14 @@ The implementation of `BatchUtils` demonstrates how to use a couple of important
 
 | Setting | Property Name | Default |
 | --- | --- |:---:|
+| **`ACCOUNT_USERNAME`** | `remote.account.username` | _(none)_ |
+| **`ACCOUNT_PASSWORD`** | `remote.account.password` | _(none)_ |
 | **`SSH_KEY_NAME`** | `remote.ssh.key.name` | `id_rsa` |
+| **`SSH_PUB_NAME`** | `remote.ssh.pub.name` | _(none)_ |
 | **`SSH_KEY_PASS`** | `remote.ssh.key.pass` | _(none)_ |
-| **`IGNORE_KNOWN_HOSTS`** | `remote.ignore.known.hosts` | `false` |
+| **`USERINFO_CLASS`** | `remote.userinfo.class` | _(none)_ |
+| **`KNOWN_HOSTS_NAME`** | `remote.known.hosts.path` | `known_hosts` |
+| **`TRUST_STRATEGY`** | `remote.trust.strategy` | `yes` |
 | **`SESSION_CONNECT_TIMEOUT`** | `remote.session.connect.timeout` | `5000` |
 | **`SSH_PORT_NUMBER`** | `remote.ssh.port.number` | `22` |
 | **`TERMINAL_HEIGHT`** | `remote.terminal.height` | `24` |
@@ -171,9 +176,21 @@ The implementation of `BatchUtils` demonstrates how to use a couple of important
 
 ### Setting Details
 
-The **`SSH_KEY_NAME`** setting specifies the path to an SSH key file for authentication to the remote host. If the key file is specified by full path, this is used as-is. Otherwise, the key file must be located in the .ssh folder of the active user's HOME directory. If the key file is encrypted, you must provide the decryption passphrase in the **`SSH_KEY_PASS`** setting. This also implies the presence of a corresponding `pub` file in the same folder as the key file.
+The **`ACCOUNT_USERNAME`** and **`ACCOUNT_PASSWORD`** settings specify the credentials used for password-based authentication to the remote host.
 
-If a _known_hosts_ file is stored in the same folder as the SSH key file(s), this _known_hosts_ file will be supplied to **JSch** as your personal Certificate Authority. The **`IGNORE_KNOWN_HOSTS`** setting specifies that this _known_hosts_ file should be ignored.
+The **`SSH_KEY_NAME`** setting specifies the path to an SSH private key file for public-key authentication. If the key file is specified by full path, this is used as-is. Otherwise, the key file must be located in the `.ssh` folder of the active user's `HOME` directory. If the key file is encrypted, you must provide the decryption passphrase in the **`SSH_KEY_PASS`** setting. The corresponding public key is normally derived by appending `.pub` to the private key path, but an explicit path can be supplied via **`SSH_PUB_NAME`** instead.
+
+The **`USERINFO_CLASS`** setting specifies the fully-qualified name of a `UserInfo` implementation used to service interactive prompts from **JSch** (for example, when the host trust strategy is `INTERACTIVE`).
+
+The **`TRUST_STRATEGY`** setting controls how the identity of the remote host is verified, corresponding directly to the JSch `StrictHostKeyChecking` configuration:
+
+| Strategy | JSch value | Behavior |
+| --- | :---: | --- |
+| **`STRICT`** (default) | `yes` | The host's public key must exist in the _known_hosts_ file; the connection is rejected if it's missing or doesn't match. |
+| **`INTERACTIVE`** | `ask` | Unknown hosts are confirmed via a `UserInfo` implementation (see **`USERINFO_CLASS`**); accepted keys are appended to the _known_hosts_ file. |
+| **`ANONYMOUS`** | `no` | Any host key is trusted blindly; the _known_hosts_ file is ignored. **Warning**: insecure — use only in trusted, transient, or isolated test environments. |
+
+The **`KNOWN_HOSTS_NAME`** setting specifies the path to the _known_hosts_ file used for host verification under the `STRICT` and `INTERACTIVE` strategies. If specified by full path, this is used as-is; otherwise it's resolved as a sibling of the SSH key file, then as a child of the `.ssh` folder of the active user's `HOME` directory. `STRICT` mode requires a resolvable _known_hosts_ file; `INTERACTIVE` mode requires that file to be writable.
 
 > **NOTE**: If credentials are specified in the remote host URL, the `SSH_KEY_NAME` and `SSH_KEY_PASS` settings are ignored. Also, no attempt is made to locate a _known_hosts_ file for **JSch**.
 
@@ -183,6 +200,6 @@ The **`COMPLETION_CHECK_INTERVAL`** setting is the interval in milliseconds betw
 
 The **`DISCONNECT_CHECK_INTERVAL`** setting is the interval in milliseconds between checks for the closure of the remote session channel.
 
-The **`CHANNEL_CHECK_INTERVAL`** setting is the interval in millisecinds between checks for available input from the remote session channel.
+The **`CHANNEL_CHECK_INTERVAL`** setting is the interval in milliseconds between checks for available input from the remote session channel.
 
-
+The **`CHANNEL_BUFFER_SIZE`** setting is the size in bytes of the buffer used for channel I/O.
