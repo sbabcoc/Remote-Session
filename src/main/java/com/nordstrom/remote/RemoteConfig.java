@@ -20,7 +20,7 @@ public class RemoteConfig extends SettingsCore<RemoteConfig.RemoteSettings> {
     private static final int COLS = 132;
     private static final int CELL_WIDTH = 7;
     private static final int CELL_HEIGHT = 9;
-    private static final int KILO = 2 << 10;
+    private static final int KILO = 2 << 9;
     private static final int BUFFER_SIZE = 100 * KILO;
     
     /**
