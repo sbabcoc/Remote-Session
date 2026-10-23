@@ -85,9 +85,9 @@
       <version>${settings.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>${testng.version}</version>
+      <groupId>com.nordstrom.tools</groupId>
+      <artifactId>testng-foundation</artifactId>
+      <version>${testng-foundation.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
